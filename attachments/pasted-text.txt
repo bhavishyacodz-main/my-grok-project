@@ -1,0 +1,1941 @@
+BRANDVIKA 2.0 — MASTER BUILD DIRECTIVE
+
+Complete Recruitment Platform | Phased Engineering | Security | White-Label | GitHub-Ready ZIP
+
+---
+
+PART 1 — YOUR MISSION
+
+You are an elite product architect, senior full-stack engineer, UI/UX designer, database architect, security engineer, QA engineer and DevOps engineer.
+
+Your mission is to independently build BRANDVIKA, a professional recruitment and hiring platform.
+
+You must create the actual application, implement its functionality, test it, fix errors, document it and deliver a complete GitHub-ready ZIP archive.
+
+You are not being asked to produce:
+
+- A business proposal.
+- A conceptual design.
+- A static website.
+- A collection of disconnected components.
+- A high-level development plan.
+- An incomplete demonstration.
+
+You must produce a working application.
+
+The product owner is not a programmer and must not be expected to reconstruct hundreds of files manually.
+
+Global decision hierarchy
+
+If requirements conflict, follow this priority:
+
+1. Security.
+2. Privacy and legal compliance.
+3. Data integrity.
+4. Functional correctness.
+5. Usability and accessibility.
+6. Performance.
+7. Visual design.
+
+Never sacrifice a higher priority to improve a lower one.
+
+---
+
+PART 2 — PRODUCT IDENTITY
+
+Name: BRANDVIKA
+
+Category: Recruitment and hiring platform.
+
+Core positioning:
+
+BRANDVIKA helps employers create professional, branded hiring pages, publish vacancies, collect applications and manage candidates through one simple platform.
+
+Primary promise:
+
+Help employers find suitable people without needing to build or maintain their own recruitment website.
+
+Target customers
+
+Primary:
+
+- Small businesses.
+- Local shops.
+- Offices.
+- Individual employers.
+- Small agencies.
+- Startups.
+
+Additional:
+
+- Medium-sized companies.
+- Large businesses.
+- Creative organisations.
+- Gaming and esports organisations.
+- Cultural and festival organisations.
+
+Build for small employers first.
+
+Do not make the initial application unnecessarily complicated for large enterprise customers.
+
+The architecture must allow future expansion without implementing every enterprise feature now.
+
+Product identity rules
+
+BRANDVIKA is an employer-side recruitment platform.
+
+It is not initially:
+
+- A general job marketplace.
+- A social network.
+- A candidate account platform.
+- An enterprise HR management suite.
+- An event management platform.
+
+---
+
+PART 3 — PRODUCT ARCHITECTURE
+
+Build one common recruitment engine with several independent visual templates.
+
+The central system must handle:
+
+- Employer authentication.
+- Employer profiles.
+- Verification.
+- Jobs.
+- Application forms.
+- Candidate applications.
+- CV uploads.
+- CV generation.
+- Applicant management.
+- Recruitment stages.
+- Privacy.
+- Reporting and moderation.
+
+Templates only control how public hiring pages look.
+
+Changing a template must never modify, duplicate or destroy recruitment data.
+
+All templates must share the same underlying database and application services.
+
+Use a modular monolith architecture.
+
+Do not introduce microservices unnecessarily.
+
+---
+
+PART 4 — MO S C O W PRIORITIES
+
+Every requirement must have a release priority.
+
+MUST — Initial MVP
+
+These features must work before the initial release:
+
+1. Employer signup and authentication.
+2. Mandatory email verification.
+3. Employer profile creation.
+4. Basic and business verification foundations.
+5. Job creation and management.
+6. Job publishing.
+7. White-label public hiring pages.
+8. Small Business template.
+9. Corporate template.
+10. Creative/Gaming template.
+11. Cultural/Festival template.
+12. Ready-made application form.
+13. Custom application form builder.
+14. Anonymous candidate applications.
+15. Existing CV upload.
+16. Instant CV builder.
+17. Text-based PDF generation and download.
+18. Employer applicant dashboard.
+19. Application status management.
+20. Private CV storage.
+21. Database RLS and employer isolation.
+22. Trust and transparency pages.
+23. Basic fraud reporting.
+24. Mobile-first interface.
+25. Development, staging and production configuration.
+26. Documentation.
+27. Tests.
+28. Complete ZIP delivery.
+
+SHOULD — Next release
+
+Design the architecture to support these features, but do not delay the initial MVP unnecessarily:
+
+- Advanced candidate comparison.
+- Interview scheduling.
+- Email interview invitations.
+- Candidate withdrawal portal.
+- WhatsApp sharing analytics.
+- QR code generation.
+- Application source tracking.
+- Advanced business verification administration.
+- Automated retention jobs.
+- More advanced recruitment reports.
+- Multiple employer team members.
+
+COULD — Future expansion
+
+- AI-assisted recruitment.
+- AI-assisted job-description writing.
+- AI-assisted CV tailoring.
+- Custom employer domains.
+- Subscription plans.
+- Payment integration.
+- Advanced analytics.
+- Multi-language interface.
+- Additional templates.
+- Enterprise permissions.
+- Advanced communications.
+
+Do not build future features prematurely.
+
+---
+
+PART 5 — LOCKED TECH STACK
+
+Use:
+
+Frontend
+
+- React.
+- Vite.
+- TypeScript.
+- Tailwind CSS.
+- Lucide React.
+- React Router v6.
+
+Backend
+
+- Supabase.
+- Supabase Auth.
+- PostgreSQL.
+- Row Level Security.
+- Supabase Storage.
+- Supabase Edge Functions where appropriate.
+
+Hosting
+
+- Vercel.
+- GitHub repository integration.
+
+Testing
+
+- Vitest.
+- React Testing Library.
+- Playwright.
+- axe accessibility checks.
+- SQL/RLS integration tests.
+- pgTAP where available.
+
+Code quality
+
+- ESLint.
+- Prettier.
+- TypeScript strict mode.
+- Dependency auditing.
+- License checking.
+
+Pin dependency versions and include a lockfile.
+
+Avoid unnecessary paid services.
+
+Do not change the locked stack without explaining the technical reason and obtaining approval.
+
+---
+
+PART 6 — EMPLOYER EXPERIENCE
+
+6.1 Employer registration
+
+Implement:
+
+- Email and password signup.
+- Email verification.
+- Sign in.
+- Password recovery.
+- Secure sessions.
+- Logout.
+- Protected employer dashboard.
+
+Mobile verification decision
+
+Initial MVP rules:
+
+- Email verification is mandatory.
+- Mobile number can be collected.
+- Mobile number must be validated for format.
+- Mobile OTP verification is deferred.
+- Do not require an SMS provider for the initial release.
+- Do not claim mobile numbers are verified without actual verification.
+
+Future mobile OTP integration must support an explicitly configured provider and its required regulatory setup.
+
+Do not silently introduce paid SMS services.
+
+6.2 Employer profile
+
+Support two employer types:
+
+Individual employer
+
+- Display name.
+- Contact information.
+- Location.
+- Employer description.
+- Profile image where appropriate.
+
+Business employer
+
+- Business name.
+- Logo.
+- Industry.
+- Description.
+- Location.
+- Contact information.
+- Website and social links where available.
+- Business information.
+- Verification status.
+
+Do not invent company registrations, legal names or business credentials.
+
+6.3 Employer dashboard
+
+Implement:
+
+- Overview.
+- Employer profile.
+- Verification centre.
+- Template library.
+- Hiring page settings.
+- My Jobs.
+- Create Job.
+- Edit Job.
+- Applications.
+- Applicant details.
+- Shortlisted applicants.
+- Recruitment stages.
+- Account settings.
+- Privacy and data controls.
+
+Show actual database statistics.
+
+For new accounts, show useful onboarding and empty states instead of fake numbers.
+
+---
+
+PART 7 — TWO-LEVEL EMPLOYER VERIFICATION
+
+Level 1: Basic verification
+
+Available to individual employers and small businesses.
+
+Requirements:
+
+- Verified email.
+- Mobile number collected and format-validated.
+- Employer identity declaration.
+- Employer policy acceptance.
+- Basic abuse and fraud checks.
+
+The label must clearly communicate that basic verification does not establish registered business status.
+
+Level 2: Business verification
+
+Additional verification for employers seeking a Business Verified badge.
+
+Collect only necessary information and documents.
+
+Support:
+
+- Document submission.
+- Pending review.
+- Approved.
+- Rejected.
+- More information required.
+- Re-verification required.
+
+Verification documents must be private.
+
+Never automatically approve a business verification request.
+
+Never display a verified badge before actual approval.
+
+Clearly explain the meaning and limitations of each verification level.
+
+---
+
+PART 8 — JOB MANAGEMENT
+
+Employers must be able to:
+
+- Create jobs.
+- Edit jobs.
+- Save drafts.
+- Preview jobs.
+- Publish jobs.
+- Pause applications.
+- Reopen jobs.
+- Close jobs.
+- Archive jobs.
+- Restore archived jobs.
+- Duplicate jobs.
+
+Job information must support:
+
+- Job title.
+- Job category.
+- Description.
+- Responsibilities.
+- Required qualifications.
+- Required skills.
+- Preferred skills.
+- Experience.
+- Employment type.
+- Location.
+- Remote, hybrid or onsite.
+- Salary or salary range.
+- Salary negotiable or undisclosed status.
+- Working hours.
+- Number of vacancies.
+- Application deadline.
+- Application form.
+- Contact information.
+
+Publishing acceptance criteria
+
+A job can be published only when:
+
+- The employer is authenticated.
+- Email verification is complete.
+- The employer is not suspended.
+- Required job information is valid.
+- The application form is valid.
+- The employer has accepted applicable policies.
+
+Drafts must not be publicly accessible.
+
+Paused, closed and archived jobs must reject new applications.
+
+Applications already received must remain preserved.
+
+Never delete candidate applications merely because a job is archived.
+
+---
+
+PART 9 — MULTIPLE HIRING TEMPLATES
+
+Create four real, switchable templates.
+
+Directory:
+
+"src/components/templates/"
+
+Required components:
+
+- "SmallBusinessTemplate.tsx"
+- "CorporateTemplate.tsx"
+- "CreativeGamingTemplate.tsx"
+- "CulturalFestivalTemplate.tsx"
+
+Small Business
+
+For shops, offices, small agencies and individual employers.
+
+Design:
+
+- Friendly.
+- Professional.
+- Clear.
+- Simple.
+- Mobile-first.
+
+This is the primary template.
+
+Corporate
+
+For professional and growing companies.
+
+Design:
+
+- Modern.
+- Structured.
+- Professional.
+- Clean typography.
+- Strong employer identity.
+
+Creative / Gaming
+
+For esports organisations, BGMI-related companies, gaming teams, creative studios and media organisations.
+
+Design:
+
+- Distinctive.
+- Bold.
+- Creative.
+- Customisable.
+
+This must remain a recruitment template, not a tournament registration system.
+
+Cultural / Festival
+
+For cultural organisations, Garba organisers, festival businesses and event companies hiring staff.
+
+Design:
+
+- Vibrant.
+- Expressive.
+- Balanced.
+- Professional.
+- Mobile-friendly.
+
+This is a recruitment template, not an event registration system.
+
+Template switching
+
+All templates must use shared data.
+
+Support:
+
+- Live preview.
+- Brand colours.
+- Employer logo.
+- Cover image.
+- Job information.
+- Application form.
+- Responsive layout.
+
+Template switching must not lose:
+
+- Job data.
+- Applications.
+- Form responses.
+- CV attachments.
+- Employer information.
+- Recruitment history.
+
+---
+
+PART 10 — WHITE-LABEL PUBLIC HIRING PAGES
+
+This is a strict requirement.
+
+Public hiring pages belong visually to the employer.
+
+The public experience must not display BRANDVIKA branding as advertising or promotion.
+
+Do not display:
+
+- BRANDVIKA logo.
+- BRANDVIKA watermark.
+- BRANDVIKA promotional footer.
+- BRANDVIKA advertising banner.
+- Forced BRANDVIKA account creation.
+- Unnecessary platform branding.
+
+Display:
+
+- Employer name.
+- Employer logo.
+- Employer colours.
+- Employer description.
+- Job information.
+- Application form.
+- Relevant contact details.
+
+Public URLs
+
+Support clean employer-specific URLs using a configurable neutral domain.
+
+Environment configuration:
+
+"PUBLIC_HIRING_BASE_URL"
+
+Example format:
+
+"https://jobs.example-domain.com/employer-slug/job-slug"
+
+Do not invent or register a real domain.
+
+Support unique and validated slugs.
+
+Prepare the architecture for employer-owned custom domains in the future.
+
+Do not claim a custom domain works before DNS and domain verification are complete.
+
+White-label legal exception
+
+White-labeling must never conceal legally required information.
+
+Every public hiring page must provide a clear, accessible footer link:
+
+Privacy & Operator Information
+
+It must identify:
+
+- The employer receiving the application.
+- The platform operator.
+- The relevant privacy notice.
+- Appropriate privacy contact information.
+
+Do not use white-labeling to mislead candidates about who processes their information.
+
+---
+
+PART 11 — PUBLIC APPLICATION FORMS
+
+Implement two application form modes.
+
+Ready-made form
+
+Provide configurable standard fields:
+
+- Full name.
+- Email.
+- Mobile number.
+- City.
+- Education.
+- Work experience.
+- Skills.
+- CV.
+
+Employers decide which fields are required.
+
+Custom form builder
+
+Support:
+
+- Short text.
+- Long text.
+- Email.
+- Phone.
+- Number.
+- Dropdown.
+- Single choice.
+- Multiple choice.
+- Yes/no.
+- Date.
+- File upload.
+
+Employers can:
+
+- Add fields.
+- Edit fields.
+- Delete fields.
+- Reorder fields.
+- Add descriptions.
+- Set required or optional.
+- Preview the form.
+
+Validate all input.
+
+Prevent unsafe HTML and script injection.
+
+Ensure the form builder works on Android and desktop.
+
+---
+
+PART 12 — CANDIDATE EXPERIENCE
+
+Candidates must never be required to create an account.
+
+No mandatory:
+
+- Candidate registration.
+- Candidate login.
+- Candidate dashboard.
+- Candidate OTP.
+
+Application workflow:
+
+1. Open employer's hiring link.
+2. View employer profile.
+3. Read job description.
+4. Select Apply.
+5. Complete application form.
+6. Upload existing CV or create one.
+7. Review details.
+8. Read privacy notice.
+9. Provide required consent.
+10. Submit.
+11. Receive confirmation.
+
+The employer must be able to view the submitted application securely.
+
+Candidates must not be able to access another person's application.
+
+Application confirmation
+
+Provide a confirmation page after successful submission.
+
+Where email delivery is configured, send a confirmation email.
+
+Never display a successful submission message before the database has actually accepted the application.
+
+---
+
+PART 13 — INSTANT CV BUILDER
+
+Implement a fully functional CV builder.
+
+Candidates must be able to create a CV without creating an account.
+
+Information fields
+
+Personal information
+
+- Full name.
+- Email.
+- Phone.
+- City.
+- Professional summary.
+
+Education
+
+- School.
+- College.
+- Qualification.
+- Course.
+- Years.
+
+Work experience
+
+- Company.
+- Job title.
+- Duration.
+- Responsibilities.
+- Achievements.
+
+Skills
+
+- Technical skills.
+- Professional skills.
+- Languages.
+
+Additional
+
+- Projects.
+- Certifications.
+- Internships.
+- Achievements.
+
+Do not force irrelevant fields.
+
+Do not invent any candidate information.
+
+CV templates
+
+Provide:
+
+- Simple professional.
+- Modern.
+- Minimal.
+- Fresher.
+- Experienced professional.
+
+CV functionality
+
+- Live preview.
+- Edit information.
+- Add and remove sections.
+- Professional typography.
+- A4 layout.
+- Correct page breaks.
+- Readable PDF.
+- ATS-friendly structure.
+- Download PDF.
+- Attach generated PDF to the current application.
+
+Use a text-based PDF solution such as "@react-pdf/renderer" or "pdf-lib".
+
+Do not create a screenshot of an HTML page and call it an ATS-friendly CV.
+
+A candidate can download their CV without submitting an application.
+
+Do not silently create a permanent candidate profile.
+
+---
+
+PART 14 — SECURE ANONYMOUS APPLICATION ARCHITECTURE
+
+Candidates do not have Supabase Auth accounts.
+
+Therefore, anonymous application submission must be handled through a trusted backend function.
+
+Implement a secure submission flow.
+
+The backend must:
+
+1. Receive the application.
+2. Validate the published job.
+3. Validate the employer and job relationship.
+4. Validate application form fields.
+5. Validate uploaded file references.
+6. Verify permitted file types and size.
+7. Apply rate limits.
+8. Apply bot protection where configured.
+9. Detect duplicate applications for the same job.
+10. Create the application using server-controlled ownership.
+11. Store answers.
+12. Record appropriate consent.
+13. Return a safe confirmation.
+
+Never trust a client-provided employer ID or ownership ID.
+
+Never expose the Supabase service-role key in browser code.
+
+Temporary upload flow
+
+For anonymous CV uploads:
+
+- Use a secure Edge Function.
+- Issue a one-time or short-lived upload authorization.
+- Use an unpredictable upload identifier.
+- Restrict the file to the intended application flow.
+- Validate file extension, actual content and magic bytes.
+- Enforce size limits.
+- Prevent arbitrary storage paths.
+- Verify uploaded file references before accepting the application.
+- Keep uploaded CVs private.
+
+Do not expose public CV URLs.
+
+Duplicate application detection
+
+Support per-job duplicate detection using normalised email or mobile information.
+
+Avoid exposing whether a particular person has applied to an employer through public error messages.
+
+Use privacy-conscious handling.
+
+Candidate withdrawal
+
+Design for an account-free withdrawal process.
+
+Use a secure, unguessable, time-limited or revocable application-management token.
+
+Do not expose applications through predictable IDs.
+
+Candidate withdrawal should be implemented in the initial release if it can be completed securely without delaying the core application flow; otherwise include it in the next release.
+
+---
+
+PART 15 — APPLICANT MANAGEMENT
+
+Implement an employer applicant workspace.
+
+Application information:
+
+- Applicant name.
+- Contact information.
+- Job applied for.
+- Application date.
+- Form responses.
+- CV.
+- Recruitment stage.
+- Private employer notes.
+- Status history.
+
+Recruitment stages:
+
+1. Applied.
+2. Under Review.
+3. Shortlisted.
+4. Interview Scheduled.
+5. Interview Completed.
+6. Selected.
+7. Rejected.
+8. Withdrawn.
+
+Implement stage changes with server-side ownership checks.
+
+Search and filtering
+
+Support:
+
+- Name.
+- Job.
+- Application date.
+- Skills.
+- Education.
+- Experience.
+- Stage.
+
+Candidate evaluation
+
+Provide consistent job-related evaluation fields.
+
+Do not automatically reject candidates based on unexplained AI scores.
+
+Do not evaluate candidates based on protected or sensitive characteristics.
+
+Human decision-making must remain central.
+
+CSV export
+
+Only authorised employers can export their own application information.
+
+Avoid including unnecessary sensitive information.
+
+---
+
+PART 16 — EMAIL AND NOTIFICATIONS
+
+Create a provider-independent email service layer.
+
+Support configuration for a suitable provider such as Resend or Brevo, or properly configured Supabase SMTP where appropriate.
+
+Do not require a paid provider to compile the application.
+
+Email functionality must be clearly marked as requiring provider credentials.
+
+Potential emails:
+
+- Employer email verification.
+- Password recovery.
+- New application notification.
+- Candidate application receipt.
+- Interview invitation.
+- Recruitment status update where appropriate.
+
+Create reusable branded email templates.
+
+Never claim an email was delivered if sending failed or the provider is not configured.
+
+Do not expose private application information in notification emails unnecessarily.
+
+---
+
+PART 17 — TRUST AND FRAUD PREVENTION
+
+Implement:
+
+- Report Job.
+- Report Employer.
+- Report Abuse.
+- Suspicious listing review.
+- Employer suspension.
+- Job removal.
+- Administrative review.
+- Abuse audit history.
+
+Flag suspicious vacancy content, especially requests for:
+
+- Application fees.
+- Registration charges.
+- Deposits.
+- Unnecessary financial credentials.
+- Misleading payment requests.
+
+Use keyword detection as a moderation signal, not an automatic final judgement.
+
+Provide a moderation process for false positives.
+
+Support a free bot-protection option such as Cloudflare Turnstile or hCaptcha.
+
+The application must remain secure when bot-protection credentials are not configured.
+
+Implement server-side rate limiting backed by a suitable database mechanism or trusted service.
+
+Never rely exclusively on browser-side rate limits.
+
+---
+
+PART 18 — DATA PRIVACY AND LEGAL TRANSPARENCY
+
+Design for applicable Indian legal requirements.
+
+Consider:
+
+- Digital Personal Data Protection framework.
+- Information Technology laws and applicable rules.
+- Consumer protection requirements.
+- Relevant employment and labour requirements.
+- Other applicable Indian data protection obligations.
+
+Do not claim legal compliance merely because legal pages exist.
+
+Do not invent current legal provisions or commencement dates.
+
+If current legal research is unavailable, clearly flag the relevant legal questions for professional review.
+
+Data responsibility
+
+Determine and document the actual data roles based on the platform's processing activities and contracts.
+
+Do not automatically assume every employer and platform relationship has identical legal roles.
+
+The architecture must support the appropriate allocation of responsibilities.
+
+Privacy requirements
+
+- Data minimisation.
+- Clear purposes.
+- Appropriate consent.
+- Consent timestamps.
+- Privacy notice version.
+- Employer identification.
+- Platform operator identification.
+- Access requests.
+- Correction requests.
+- Deletion requests.
+- Retention controls.
+- Secure storage.
+- Private downloads.
+- Breach-response procedures.
+- Complaint handling.
+
+Children and age
+
+Provide an appropriate age-eligibility notice and configurable job eligibility requirements.
+
+Do not collect unnecessary date-of-birth information.
+
+Consider applicable rules for children's personal data under Indian law.
+
+Require qualified legal review of the final age and consent workflow before public launch.
+
+Legal pages
+
+Create:
+
+- About Us.
+- Contact Us.
+- Privacy Policy.
+- Terms of Service.
+- Employer Terms.
+- Candidate Privacy Notice.
+- Cookie Policy.
+- Acceptable Use Policy.
+- Report Abuse.
+- Grievance / Complaints.
+- Data Access and Deletion.
+- Privacy & Operator Information.
+
+Use clearly identified configuration fields for legal operator information.
+
+Never invent registered business details or contact information.
+
+Grievance handling
+
+Support configuration for:
+
+- Grievance contact.
+- Responsible person.
+- Contact email.
+- Complaint submission.
+- Complaint reference.
+- Status tracking.
+
+Retention
+
+Create configurable retention rules.
+
+Prepare scheduled deletion using "pg_cron" or a scheduled Edge Function where available.
+
+Do not automatically delete data before the retention policy and legal requirements are established.
+
+Document backup and deletion implications.
+
+---
+
+PART 19 — SUPABASE DATABASE
+
+Create a complete database implementation.
+
+Suggested tables:
+
+- "employer_profiles"
+- "employer_verification_requests"
+- "jobs"
+- "application_forms"
+- "application_questions"
+- "applications"
+- "application_answers"
+- "application_stage_history"
+- "employer_notes"
+- "platform_reports"
+- "platform_admins"
+- "privacy_requests"
+- "consent_records"
+- "rate_limit_records"
+- "audit_logs"
+- "platform_settings"
+
+Additional tables may be introduced where technically justified.
+
+Database requirements
+
+- UUID primary keys.
+- Foreign keys.
+- Unique constraints.
+- Check constraints.
+- Indexes.
+- Appropriate timestamps.
+- Strict ownership relationships.
+- Safe archival.
+- Referential integrity.
+
+Do not cascade-delete applications when deleting or archiving jobs.
+
+Use restrictive deletion or archival where needed.
+
+Signup trigger
+
+Create:
+
+"handle_new_user()"
+
+It must safely create an employer profile after employer signup.
+
+Use appropriate security-definer configuration and safe "search_path".
+
+Handle failure and duplicate cases safely.
+
+Administrative role
+
+Use a separate "platform_admins" table.
+
+Never use client-editable user metadata as the authority for administrator privileges.
+
+Seed initial administrative access through an explicitly controlled manual database process.
+
+Do not hardcode administrator passwords.
+
+RLS
+
+Enable RLS on all private tables.
+
+Policies must ensure:
+
+- Employers can access only their own employer profiles.
+- Employers can access only their own jobs.
+- Employers can access only applications submitted to their jobs.
+- Employers cannot access another employer's CVs.
+- Employers cannot access another employer's verification documents.
+- Employers cannot access another employer's private notes.
+- Public visitors can read only published job information.
+- Public visitors cannot list private applications.
+- Public visitors cannot read private answers.
+- Candidates cannot assign application ownership.
+- Administrators have only explicitly authorised access.
+
+Security must be enforced in PostgreSQL and trusted backend operations, not merely in React.
+
+SQL files
+
+Create:
+
+"supabase/schema.sql"
+
+Also create ordered migrations.
+
+The schema file must support a fresh Supabase project.
+
+Include:
+
+- Tables.
+- Constraints.
+- Indexes.
+- Functions.
+- Triggers.
+- RLS.
+- Policies.
+- Storage configuration.
+- Relevant database helper functions.
+
+Test the schema where an actual database is available.
+
+Do not silently modify an existing production database.
+
+---
+
+PART 20 — STORAGE ARCHITECTURE
+
+Separate public and private assets.
+
+Public-read employer assets
+
+Use a public-read bucket for approved public-facing:
+
+- Employer logos.
+- Public cover images.
+
+Only authorised employer owners may upload or replace their own assets.
+
+Enforce file size and type restrictions.
+
+Validate uploaded files.
+
+Do not allow arbitrary executable content.
+
+Private assets
+
+Use private buckets for:
+
+- Candidate CVs.
+- Business verification documents.
+- Other sensitive application attachments.
+
+Require authorised access and short-lived signed download URLs.
+
+Never expose permanent public CV links.
+
+Restrict object ownership and access.
+
+File validation
+
+Do not trust file extensions or browser MIME declarations alone.
+
+Validate actual file content.
+
+Enforce upload size limits.
+
+Use a secure file-handling process.
+
+Do not claim malware scanning unless a genuine scanning service is configured and used.
+
+---
+
+PART 21 — PUBLIC LINK SHARING AND SEO
+
+Implement:
+
+- Copy job link.
+- WhatsApp share.
+- QR code generation.
+- Clean job slugs.
+- Employer-specific URL.
+- Share preview metadata.
+- Source tracking.
+
+Open Graph previews
+
+Vite SPA pages alone may not generate reliable job-specific social previews.
+
+Implement a suitable Vercel serverless or edge rendering route for job-specific:
+
+- Page title.
+- Description.
+- Employer name.
+- Public image.
+- Open Graph metadata.
+- Twitter/X metadata.
+
+Ensure preview rendering does not reveal private application information.
+
+Do not invent employer details in social previews.
+
+UTM tracking
+
+Prepare source attribution using standard UTM parameters.
+
+Track aggregate application sources without unnecessarily collecting sensitive personal data.
+
+---
+
+PART 22 — DESIGN SYSTEM AND PERFORMANCE
+
+Build a professional, consistent design system.
+
+Include:
+
+- Typography.
+- Colour tokens.
+- Spacing.
+- Buttons.
+- Inputs.
+- Cards.
+- Dialogs.
+- Dropdowns.
+- Tables.
+- Badges.
+- Alerts.
+- Loading states.
+- Empty states.
+- Error states.
+
+Use Lucide React icons.
+
+Do not create an overloaded dashboard.
+
+Do not use excessive animations.
+
+Mobile-first
+
+Optimise for ordinary Android phones and slower networks.
+
+Test:
+
+- Small screens.
+- Standard phones.
+- Tablets.
+- Desktop.
+- Large desktop.
+
+Support accessible labels and keyboard navigation.
+
+Target WCAG 2.1 AA.
+
+Include automated axe checks where possible.
+
+Performance
+
+Implement:
+
+- Lazy-loaded images.
+- Sensible image compression.
+- Responsive image dimensions.
+- Route-level code splitting.
+- Minimal unnecessary dependencies.
+- Low-bandwidth-friendly forms.
+- Efficient database queries.
+
+Prepare PWA basics if they do not introduce unnecessary complexity.
+
+Use Lighthouse performance checks when a browser is available.
+
+Set and document realistic performance budgets.
+
+---
+
+PART 23 — INTERNATIONALISATION
+
+Prepare the interface using translation keys from the beginning.
+
+English is the initial language.
+
+Prepare future language support for:
+
+- Hindi.
+- Gujarati.
+
+Do not translate automatically generated legal text without review.
+
+Do not introduce broken or partially translated user experiences.
+
+---
+
+PART 24 — THREE ENVIRONMENTS
+
+Prepare independent environments.
+
+Development
+
+- Development frontend.
+- Development Supabase.
+- Test data.
+- Experimental work.
+
+Staging
+
+- Preview deployment.
+- Separate Supabase project.
+- Release testing.
+- Security and regression checks.
+
+Production
+
+- Production deployment.
+- Separate Supabase project.
+- Real user data.
+- Strict release controls.
+- Backups.
+
+Never point staging to production accidentally.
+
+Never use production candidate information for ordinary tests.
+
+Do not claim that these projects have been created until actual configuration is verified.
+
+---
+
+PART 25 — PROJECT STRUCTURE
+
+Use a maintainable structure:
+
+"src/"
+
+- "app/"
+- "components/"
+- "components/ui/"
+- "components/templates/"
+- "components/forms/"
+- "contexts/"
+- "hooks/"
+- "layouts/"
+- "lib/"
+- "pages/"
+- "features/"
+- "services/"
+- "types/"
+- "utils/"
+- "styles/"
+- "i18n/"
+
+"supabase/"
+
+- "schema.sql"
+- "migrations/"
+- "functions/"
+
+"public/"
+
+- Assets.
+- Icons.
+- Manifest.
+- "_redirects".
+
+"docs/"
+
+- Product requirements.
+- Architecture.
+- Database.
+- Security.
+- Testing.
+- Deployment.
+- Privacy.
+- Continuity.
+
+Keep UI, business logic, database access and security-sensitive operations separated.
+
+Avoid massive monolithic components.
+
+---
+
+PART 26 — PHASED DEVELOPMENT PROTOCOL
+
+This project must be built in phases.
+
+Do not attempt to generate the entire application in one enormous response.
+
+Do not truncate files.
+
+Do not move forward while the current phase has unresolved blocking errors.
+
+Maintain a development checkpoint after every phase.
+
+PHASE 0 — PROJECT DISCOVERY AND FOUNDATION
+
+Deliver:
+
+- File tree.
+- Architecture decisions.
+- Product requirements.
+- Dependency list.
+- Environment assumptions.
+- Development scripts.
+- Initial documentation.
+- GitHub-ready project structure.
+
+Do not spend the entire phase writing a plan.
+
+Prepare the actual project workspace.
+
+PHASE 1 — DATABASE, AUTHENTICATION AND SECURITY FOUNDATION
+
+Implement:
+
+- Supabase configuration.
+- Database schema.
+- Employer signup.
+- Email verification.
+- Authentication context.
+- Protected routes.
+- Employer profile creation.
+- RLS.
+- Admin role foundation.
+- Storage buckets.
+- Secure server functions.
+- Environment validation.
+
+Acceptance criteria:
+
+- Employer signup works where Supabase is configured.
+- Email verification is enforced.
+- Employer records are created.
+- Protected pages require authentication.
+- RLS prevents cross-employer access.
+- Private storage cannot be accessed publicly.
+
+PHASE 2 — PUBLIC WEBSITE AND EMPLOYER FOUNDATION
+
+Implement:
+
+- Landing page.
+- About.
+- Contact.
+- Employer sign in.
+- Employer signup.
+- Password recovery.
+- Employer onboarding.
+- Employer profile.
+- Legal pages.
+- Public page layout foundation.
+
+Acceptance criteria:
+
+- Responsive public website.
+- Functional authentication.
+- Employer onboarding.
+- Accurate legal placeholders.
+- No fake company details.
+
+PHASE 3 — JOB MANAGEMENT AND APPLICATION SYSTEM
+
+Implement:
+
+- Job creation.
+- Job editing.
+- Draft saving.
+- Publishing.
+- Pausing.
+- Closing.
+- Archiving.
+- Restoration.
+- Ready-made forms.
+- Custom form builder.
+- Public job route.
+- Anonymous application submission.
+- Secure file upload.
+- Application confirmation.
+
+Acceptance criteria:
+
+- Only valid jobs can be published.
+- Public users can read published jobs.
+- Candidates can submit without accounts.
+- Applications belong to the correct employer.
+- Private application records cannot be accessed publicly.
+- Archived and closed jobs reject new applications.
+
+PHASE 4 — CV BUILDER AND APPLICANT MANAGEMENT
+
+Implement:
+
+- CV builder.
+- CV templates.
+- Live preview.
+- PDF download.
+- CV attachment to application.
+- Applicant dashboard.
+- Application details.
+- Recruitment stages.
+- Search and filtering.
+- CSV export.
+
+Acceptance criteria:
+
+- CV is generated from candidate-provided information.
+- PDF contains selectable text.
+- CV download works.
+- Private CV storage works.
+- Employers see only their own applicants.
+- Application stages persist correctly.
+
+PHASE 5 — WHITE-LABEL TEMPLATES
+
+Implement:
+
+- Small Business.
+- Corporate.
+- Creative/Gaming.
+- Cultural/Festival.
+- Template renderer.
+- Brand settings.
+- Logo and cover integration.
+- Live preview.
+- Switching.
+- Public share metadata.
+
+Acceptance criteria:
+
+- All templates work.
+- All templates use shared recruitment data.
+- Template switching preserves all records.
+- Public pages show employer branding.
+- BRANDVIKA promotional branding is absent.
+- Legal operator disclosure remains accessible.
+
+PHASE 6 — ADMINISTRATION AND TRUST
+
+Implement:
+
+- Verification review foundations.
+- Report Job.
+- Report Employer.
+- Abuse reporting.
+- Employer suspension.
+- Job moderation.
+- Administrative access controls.
+- Consent records.
+- Privacy request foundation.
+- Audit logs.
+
+Acceptance criteria:
+
+- Admin privileges cannot be self-assigned.
+- Verification badges reflect real status.
+- Suspended employers cannot publish.
+- Reports are securely recorded.
+- Administrative actions are auditable.
+
+PHASE 7 — QA, SECURITY AND RELEASE
+
+Run:
+
+- TypeScript.
+- ESLint.
+- Unit tests.
+- Integration tests.
+- RLS tests.
+- Anonymous submission tests.
+- Storage tests.
+- Playwright.
+- Mobile viewport tests.
+- Accessibility tests.
+- Production build.
+- Dependency audit.
+- License check.
+
+Fix failures before release.
+
+PHASE 8 — DOCUMENTATION AND ZIP DELIVERY
+
+Generate:
+
+- Complete documentation.
+- Known limitations.
+- Test report.
+- Setup instructions.
+- GitHub upload instructions.
+- Supabase setup instructions.
+- Vercel deployment instructions.
+- Final project ZIP.
+
+Do not call the project complete until the actual ZIP has been verified.
+
+---
+
+PART 27 — ENVIRONMENT AND TOOL LIMITATIONS
+
+Before executing, inspect the available environment.
+
+Determine whether you have:
+
+- File creation access.
+- Terminal access.
+- Package installation.
+- Internet access.
+- Supabase access.
+- Browser testing.
+- GitHub access.
+- ZIP generation capability.
+
+Do not assume these capabilities exist.
+
+If "npm install" cannot run, report that.
+
+If a database is unavailable, report which SQL and RLS tests were written but not executed.
+
+If a browser is unavailable, report which UI tests were written but not executed.
+
+If external credentials are unavailable, provide complete configuration instructions.
+
+Never convert "NOT RUN" into "PASS".
+
+Never invent command output.
+
+---
+
+PART 28 — ACCEPTANCE CRITERIA AND VERIFICATION REPORT
+
+Every feature must have explicit acceptance criteria.
+
+For every release gate, provide:
+
+Test| Command or method| Result
+TypeScript| npm run typecheck| PASS / FAIL / NOT RUN
+Unit tests| npm run test| PASS / FAIL / NOT RUN
+Build| npm run build| PASS / FAIL / NOT RUN
+RLS| SQL tests| PASS / FAIL / NOT RUN
+Storage| Access tests| PASS / FAIL / NOT RUN
+Mobile| Browser tests| PASS / FAIL / NOT RUN
+Accessibility| axe checks| PASS / FAIL / NOT RUN
+
+Include actual output or a concise verifiable summary.
+
+Also report:
+
+- What was tested.
+- What was not tested.
+- What failed.
+- What was fixed.
+- What requires external credentials.
+- What requires human approval.
+
+---
+
+PART 29 — GLOBAL DEVELOPMENT RULES
+
+Never:
+
+- Write incomplete required files.
+- Leave fake buttons.
+- Use fake authentication.
+- Claim a database operation succeeded without confirmation.
+- Fabricate test results.
+- Fabricate business verification.
+- Invent company details.
+- Expose secrets.
+- Put service-role keys in frontend code.
+- Delete application records through unsafe cascading.
+- Use production data in tests.
+- Claim a deployment is live without verification.
+- Claim legal compliance without appropriate review.
+
+Use realistic loading, empty, error and success states.
+
+Use safe defaults.
+
+Keep dependencies minimal.
+
+Keep the code maintainable.
+
+Document important decisions.
+
+Decisions you can make independently
+
+You may choose:
+
+- Component naming.
+- Internal folder structure.
+- UI component implementation.
+- Non-destructive refactoring.
+- Suitable test organisation.
+- Internal service abstractions.
+- Reasonable responsive breakpoints.
+
+Decisions requiring product-owner approval
+
+Ask before:
+
+- Changing the product vision.
+- Changing the locked stack.
+- Introducing paid services.
+- Adding payment collection.
+- Making legal commitments.
+- Changing privacy boundaries.
+- Changing production configuration.
+- Deleting or destructively migrating existing data.
+- Removing mandatory features.
+- Introducing a new public business model.
+
+Do not ask for approval for every ordinary coding decision.
+
+---
+
+PART 30 — DOCUMENTATION
+
+Create:
+
+- "README.md"
+- "DOCUMENTATION.md"
+- "PRODUCT-REQUIREMENTS.md"
+- "ARCHITECTURE.md"
+- "DATABASE-SCHEMA.md"
+- "SECURITY.md"
+- "TESTING.md"
+- "DEPLOYMENT.md"
+- "PRIVACY.md"
+- "CHANGELOG.md"
+- "KNOWN-LIMITATIONS.md"
+- "docs/PROJECT-CONTINUITY/START-HERE.md"
+
+Documentation must be sufficient for another AI developer to continue development without access to this conversation.
+
+The GitHub repository must become the project's source of truth.
+
+Keep documentation updated after each phase.
+
+---
+
+PART 31 — GITHUB-FIRST HANDOVER
+
+The final project must be easy to upload to a new private GitHub repository.
+
+Include:
+
+- Correct project root.
+- Complete source code.
+- Lockfile.
+- Database schema.
+- Migrations.
+- Supabase functions.
+- Tests.
+- Documentation.
+- GitHub Actions CI workflow.
+- Environment example.
+
+GitHub Actions should run relevant:
+
+- TypeScript checks.
+- Linting.
+- Unit tests.
+- Production build.
+- Dependency audit.
+- License checks.
+
+Do not include real credentials in GitHub.
+
+Provide simple instructions for:
+
+1. Creating a private repository.
+2. Uploading the ZIP contents.
+3. Connecting the repository to Vercel.
+4. Connecting Supabase.
+5. Configuring GitHub secrets.
+6. Configuring environment variables.
+7. Running the initial release checks.
+
+Do not claim GitHub is connected unless the connection actually exists.
+
+---
+
+PART 32 — BACKUP AND RECOVERY
+
+Provide a backup and recovery runbook.
+
+Document:
+
+- Database backup strategy.
+- Storage backup considerations.
+- Migration recovery.
+- Deployment rollback.
+- Environment recovery.
+- Incident response.
+
+Never run destructive database migrations without appropriate backup and approval.
+
+Production must be isolated from ordinary development.
+
+---
+
+PART 33 — FINAL ZIP REQUIREMENTS
+
+Generate:
+
+"brandvika-mvp.zip"
+
+It must contain the complete GitHub-ready project.
+
+Include:
+
+- All application source code.
+- All four templates.
+- Public pages.
+- Employer dashboard.
+- CV builder.
+- Database schema.
+- Migrations.
+- Supabase functions.
+- Tests.
+- Configuration.
+- Documentation.
+- GitHub Actions workflow.
+- Public assets.
+- Package manifest.
+- Lockfile.
+
+Exclude:
+
+- "node_modules".
+- Build caches.
+- Temporary files.
+- Real ".env" files.
+- Database passwords.
+- Supabase service-role keys.
+- API secrets.
+- Personal credentials.
+- Real candidate information.
+
+Include ".env.example".
+
+Before providing the ZIP:
+
+1. Generate the archive.
+2. Confirm the file exists.
+3. Inspect archive contents.
+4. Verify expected files.
+5. Check for secrets.
+6. Extract into a clean temporary directory.
+7. Verify the packaged project structure.
+8. Run build and tests from the packaged project where possible.
+
+Provide the actual downloadable ZIP link.
+
+Never invent a file link.
+
+If ZIP generation is unavailable, report the limitation and provide the actual project files through the available workspace.
+
+---
+
+PART 34 — FINAL HANDOVER REPORT
+
+At the end, provide:
+
+1. Download link to the ZIP.
+2. Project file tree.
+3. Completed phases.
+4. Incomplete features.
+5. Test verification report.
+6. Security implementation summary.
+7. Supabase setup instructions.
+8. Vercel setup instructions.
+9. GitHub upload instructions.
+10. Environment variable list.
+11. Required external credentials.
+12. Legal review items.
+13. Known limitations.
+14. Next recommended development step.
+
+Clearly distinguish:
+
+- Implemented.
+- Tested and passed.
+- Implemented but not tested.
+- Not implemented.
+- Requires external configuration.
+- Requires product-owner approval.
+
+---
+
+PART 35 — START NOW
+
+Start by inspecting your environment.
+
+Then execute the phases in order.
+
+Do not stop after writing a plan.
+
+Do not try to produce all files in one enormous chat response.
+
+Create actual project files in your workspace, maintain checkpoints, and continue phase by phase.
+
+If the environment requires multiple execution turns, continue from the latest checkpoint without repeating or overwriting completed work.
+
+The product owner should only need to:
+
+- Download the ZIP.
+- Create the GitHub repository.
+- Connect the required accounts.
+- Supply credentials when necessary.
+- Approve sensitive operations.
+
+Your mission is to deliver a real, maintainable, secure and professional BRANDVIKA recruitment platform.
+
+Build for real employers and real applicants. Prioritise trust, usability, privacy, security and reliability.
