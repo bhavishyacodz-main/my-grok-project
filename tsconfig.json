@@ -35,6 +35,8 @@
     "src/lib/auth/validation.ts",
     "src/lib/auth/validation.test.ts",
     "src/lib/employer/validation.ts",
-    "src/lib/employer/validation.test.ts"
+    "src/lib/employer/validation.test.ts",
+    "src/lib/jobs/validation.ts",
+    "src/lib/jobs/validation.test.ts"
   ]
 }
