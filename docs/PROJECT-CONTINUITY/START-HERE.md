@@ -12,6 +12,7 @@ All work belongs on `codex/brandvika-v2-supabase-migration`. Production `main`, 
 - Added employer email/password sign-up and sign-in, Google OAuth entry, email confirmation messaging and password reset.
 - Added a protected dashboard preview shell.
 - Added employer profile onboarding UI, server-side input validation and an `employer-bootstrap` Edge Function that verifies the Supabase user before creating a private draft profile.
+- Added job draft creation, employer-scoped listing, archive/restore UI and an `employer-jobs` Edge Function. Publishing is intentionally not available yet.
 - Added Vercel SPA rewrite configuration.
 - Added `.env.example`, README and initial architecture/security/deployment docs.
 
