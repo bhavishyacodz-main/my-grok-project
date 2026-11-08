@@ -8,6 +8,12 @@ Allowed browser variables:
 
 Never expose database URLs, database passwords, Supabase service-role keys, Supabase secret keys, Google OAuth client secrets or admin credentials in browser bundles, source files or committed environment files.
 
+## Employer profile bootstrap function
+
+`supabase/functions/employer-bootstrap` requires a valid Supabase access token and a verified email. It validates all profile input on the server and uses the service-role key only inside the Edge Function to create a profile whose `user_id` is the authenticated user's UUID. The service-role key must be configured as a Supabase Function secret and must never be copied into Vercel `VITE_*` variables.
+
+The function fails closed for browser origins not listed in the `ALLOWED_ORIGINS` Supabase Function secret, apart from local development origins. Before deployment, set this secret to the exact production/preview origins intended to call the function.
+
 ## Authorization
 
 - RLS must be enabled on every exposed table.
