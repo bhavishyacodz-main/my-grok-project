@@ -18,7 +18,7 @@ All work belongs on `codex/brandvika-v2-supabase-migration`. Production `main`, 
 
 - Dependencies and lockfile have not yet been reconciled by a local npm install.
 - Vercel successfully ran tsc --noEmit for the active migration frontend and completed vite build; no local build was run because the container could not reach GitHub.
-- No unit, browser, RLS or accessibility tests have run.
+- Five employer-auth validation unit tests passed in the Vercel build. Browser, RLS, Edge Function and accessibility tests have not run.
 - Supabase Auth provider configuration has not been changed.
 - No database migration or RLS policy has been applied. Supabase branch creation requested explicit cost confirmation, so no billable database branch was created.
 - No Edge Functions or private Storage policies have been deployed.
