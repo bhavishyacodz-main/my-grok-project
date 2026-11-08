@@ -2,16 +2,15 @@
 
 ## Verified so far
 
-- Vercel preview build completed successfully for the migration branch.
-- The active React Router frontend passed `tsc --noEmit` in the Vercel build.
-- Vite produced the static `dist/` bundle.
+- Vercel successfully ran `tsc --noEmit` for the active migration frontend.
+- Five Node-based employer-auth validation unit tests passed.
+- Vite completed the static production build and generated `dist/`.
 
-These checks do not verify authentication against a configured Supabase project, RLS, Storage, Edge Functions or user journeys.
+These checks do not verify authentication against a configured Supabase project, RLS, Storage, Edge Functions or complete user journeys.
 
 ## Pending automated tests
 
-- Vitest unit tests for auth state, form validation and route guards.
-- React Testing Library tests for employer sign-in, registration, password reset and loading/error states.
+- Vitest and React Testing Library component tests for auth state, forms and route guards.
 - Playwright browser tests for signup, email confirmation, Google OAuth callback, protected routes and sign-out.
 - axe accessibility checks for public, login and dashboard pages.
 - SQL/RLS tests for cross-employer isolation, candidate privacy and admin-only data.
