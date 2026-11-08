@@ -17,16 +17,17 @@ All work belongs on `codex/brandvika-v2-supabase-migration`. Production `main`, 
 ## Important current limitations
 
 - Dependencies and lockfile have not yet been reconciled by a local npm install.
-- No local build, typecheck or browser tests have been run in this environment.
+- Vercel successfully ran tsc --noEmit for the active migration frontend and completed vite build; no local build was run because the container could not reach GitHub.
+- No unit, browser, RLS or accessibility tests have run.
 - Supabase Auth provider configuration has not been changed.
-- No database migration or RLS policy has been applied.
+- No database migration or RLS policy has been applied. Supabase branch creation requested explicit cost confirmation, so no billable database branch was created.
 - No Edge Functions or private Storage policies have been deployed.
 - Existing employer/jobs/applications backend still uses the legacy TanStack Start + Better Auth server functions and has not yet been migrated.
 - The dashboard is a shell, not a completed employer product.
 
 ## Next steps
 
-1. Reconcile and commit the npm lockfile on this branch, then run build/typecheck/lint.
+1. Reconcile and commit the npm lockfile on this branch, then run build/typecheck/lint. Typecheck and Vite build currently pass on Vercel.
 2. Create or confirm an isolated Supabase development project.
 3. Implement reviewed RLS and private Storage migrations without touching production.
 4. Complete the Supabase Auth callback and verify Google/email flows in preview.
