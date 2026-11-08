@@ -276,7 +276,7 @@ function EmployerOnboardingPage() {
       });
       if (invokeError) throw invokeError;
       if (data?.error) throw new Error(data.error);
-      setMessage("Your employer profile has been saved. Your public hiring page remains private until you choose to publish it.");
+      setMessage(data?.existing ? "An employer profile already exists. This milestone does not yet support editing existing profile details; no changes were saved." : "Your employer profile has been saved. Your public hiring page remains private until you choose to publish it.");
       window.setTimeout(() => navigate("/dashboard", { replace: true }), 700);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not save your employer profile.");
