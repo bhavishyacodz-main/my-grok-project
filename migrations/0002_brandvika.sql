@@ -234,3 +234,48 @@ create table if not exists inquiries (
   message text not null,
   created_at timestamptz not null default now()
 );
+
+
+-- Production hardening for the current Better Auth architecture.
+-- Authentication and all application data are accessed only by the trusted
+-- server-side PostgreSQL role. Do not expose these tables through the Supabase
+-- Data API until policies are designed for the app's Better Auth identities.
+create table if not exists _migrations (
+  name text primary key,
+  applied_at timestamptz not null default now()
+);
+
+do $brandvika_rls$
+declare
+  t record;
+  role_name text;
+begin
+  for t in
+    select tablename from pg_tables where schemaname = 'public'
+  loop
+    execute format('alter table public.%I enable row level security', t.tablename);
+    execute format('revoke all on table public.%I from public', t.tablename);
+    foreach role_name in array array['anon', 'authenticated'] loop
+      if exists (select 1 from pg_roles where rolname = role_name) then
+        execute format('revoke all on table public.%I from %I', t.tablename, role_name);
+      end if;
+    end loop;
+  end loop;
+end
+$brandvika_rls$;
+
+-- Future tables created by the migration/runtime database role are not
+-- automatically readable or writable by the Data API roles.
+alter default privileges in schema public
+  revoke all on tables from public;
+
+do $brandvika_default_privileges$
+begin
+  if exists (select 1 from pg_roles where rolname = 'anon') then
+    execute 'alter default privileges in schema public revoke all on tables from anon';
+  end if;
+  if exists (select 1 from pg_roles where rolname = 'authenticated') then
+    execute 'alter default privileges in schema public revoke all on tables from authenticated';
+  end if;
+end
+$brandvika_default_privileges$;
