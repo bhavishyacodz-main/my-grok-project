@@ -68,11 +68,12 @@ Deno.serve(async (request: Request) => {
 
   const { data: profile, error: profileError } = await admin
     .from("employer_profiles")
-    .select("user_id")
+    .select("user_id, suspended_at")
     .eq("user_id", userId)
     .maybeSingle();
   if (profileError) return json({ error: "Could not verify the employer profile." }, 500, headers);
   if (!profile) return json({ error: "Complete your employer profile before creating jobs." }, 409, headers);
+  if (profile.suspended_at) return json({ error: "This employer workspace is currently restricted." }, 403, headers);
 
   if (payload.action === "list") {
     const { data, error } = await admin
