@@ -23,6 +23,8 @@ import {
 } from "lucide-react";
 import { useSupabaseAuth } from "./lib/auth/supabase-context";
 import { validateEmployerCredentials } from "./lib/auth/validation";
+import { validateEmployerProfile } from "./lib/employer/validation";
+import { supabase } from "./lib/supabase/client";
 
 function Brand({ compact = false }: { compact?: boolean }) {
   return (
@@ -246,6 +248,76 @@ function AuthCallbackPage() {
   return <AuthLayout><div className="text-center"><CheckCircle2 className="mx-auto size-10 text-pine" /><h1 className="mt-5 font-display text-2xl">Signing you in</h1><p className="mt-3 text-sm text-muted">{message}</p><Link to="/login" className="mt-6 inline-block font-semibold text-pine">Return to sign in</Link></div></AuthLayout>;
 }
 
+function EmployerOnboardingPage() {
+  const auth = useSupabaseAuth();
+  const navigate = useNavigate();
+  const [employerType, setEmployerType] = useState<"individual" | "business">("business");
+  const [displayName, setDisplayName] = useState("");
+  const [city, setCity] = useState("");
+  const [region, setRegion] = useState("");
+  const [contactEmail, setContactEmail] = useState(auth.user?.email ?? "");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const validation = validateEmployerProfile({ employerType, displayName, city, region, contactEmail });
+    if (!validation.ok) { setError(validation.message); return; }
+    if (!supabase) { setError("Supabase is not configured for this preview."); return; }
+
+    setBusy(true);
+    setError("");
+    setMessage("");
+    try {
+      const { data, error: invokeError } = await supabase.functions.invoke("employer-bootstrap", {
+        body: validation.value,
+      });
+      if (invokeError) throw invokeError;
+      if (data?.error) throw new Error(data.error);
+      setMessage("Your employer profile has been saved. Your public hiring page remains private until you choose to publish it.");
+      window.setTimeout(() => navigate("/dashboard", { replace: true }), 700);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not save your employer profile.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <AuthLayout>
+      <Link to="/dashboard" className="text-sm text-muted hover:text-pine">← Back to workspace</Link>
+      <div className="mt-8 grid size-12 place-items-center rounded-2xl bg-pine text-white"><Building2 className="size-6" /></div>
+      <h1 className="mt-6 font-display text-3xl">Set up your employer profile</h1>
+      <p className="mt-3 text-sm leading-7 text-muted">Add the basic details for your hiring workspace. Your public employer page will stay unpublished for now.</p>
+      {!auth.isConfigured && <Notice tone="warning">Connect the development Supabase project before saving this profile.</Notice>}
+      {error && <Notice tone="error">{error}</Notice>}
+      {message && <Notice tone="success">{message}</Notice>}
+      <form onSubmit={(event) => void submit(event)} className="mt-7 space-y-4">
+        <fieldset>
+          <legend className="text-sm font-semibold">Profile type</legend>
+          <div className="mt-2 grid grid-cols-2 gap-3">
+            <label className={`rounded-xl border p-3 text-sm ${employerType === "business" ? "border-pine bg-[#e8f2ec]" : "border-line bg-white"}`}>
+              <input className="mr-2 accent-[#0e6b52]" type="radio" name="employerType" value="business" checked={employerType === "business"} onChange={() => setEmployerType("business")} />Business
+            </label>
+            <label className={`rounded-xl border p-3 text-sm ${employerType === "individual" ? "border-pine bg-[#e8f2ec]" : "border-line bg-white"}`}>
+              <input className="mr-2 accent-[#0e6b52]" type="radio" name="employerType" value="individual" checked={employerType === "individual"} onChange={() => setEmployerType("individual")} />Individual
+            </label>
+          </div>
+        </fieldset>
+        <label className="block text-sm font-semibold">Display name<input required minLength={2} maxLength={120} value={displayName} onChange={(event) => setDisplayName(event.target.value)} placeholder="Your business or professional name" className="mt-2 w-full rounded-xl border border-line bg-white px-4 py-3 font-normal outline-none focus:border-pine" /></label>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="block text-sm font-semibold">City<input maxLength={80} value={city} onChange={(event) => setCity(event.target.value)} placeholder="City" className="mt-2 w-full rounded-xl border border-line bg-white px-4 py-3 font-normal outline-none focus:border-pine" /></label>
+          <label className="block text-sm font-semibold">State / region<input maxLength={80} value={region} onChange={(event) => setRegion(event.target.value)} placeholder="State or region" className="mt-2 w-full rounded-xl border border-line bg-white px-4 py-3 font-normal outline-none focus:border-pine" /></label>
+        </div>
+        <label className="block text-sm font-semibold">Contact email<input required type="email" maxLength={254} value={contactEmail} onChange={(event) => setContactEmail(event.target.value)} className="mt-2 w-full rounded-xl border border-line bg-white px-4 py-3 font-normal outline-none focus:border-pine" /></label>
+        <button type="submit" disabled={busy || !auth.isConfigured} className="w-full rounded-xl bg-pine px-4 py-3 font-semibold text-white hover:bg-[#09563f] disabled:opacity-50">{busy ? "Saving profile…" : "Save employer profile"}</button>
+      </form>
+      <p className="mt-5 text-xs leading-5 text-muted">This creates a private draft profile. It does not verify a business, publish a hiring page or make any legal claims.</p>
+    </AuthLayout>
+  );
+}
+
 function RequireEmployer({ children }: { children: ReactNode }) {
   const auth = useSupabaseAuth();
   if (auth.loading) return <LoadingPage />;
@@ -269,7 +341,7 @@ function DashboardPage() {
         <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-semibold uppercase tracking-[.16em] text-pine">Employer workspace</p><h1 className="mt-2 font-display text-4xl">Your hiring dashboard</h1><p className="mt-3 text-muted">Signed in as {user?.email ?? "employer"}.</p></div><span className="rounded-full bg-[#fff1df] px-4 py-2 text-xs font-semibold text-[#8b4a1e]">Migration preview</span></div>
         <div className="mt-8 rounded-2xl border border-line bg-card p-6"><div className="flex items-start gap-3"><CircleHelp className="mt-1 size-5 shrink-0 text-pine" /><div><h2 className="font-semibold">Authentication foundation is connected in this branch</h2><p className="mt-2 max-w-3xl text-sm leading-6 text-muted">This is the first migration milestone, not the completed employer dashboard. Job management, application tracking, hiring-page templates and private CV storage will be migrated and tested in the next milestones. Your existing production app and data have not been changed.</p></div></div></div>
         <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <WorkspaceCard icon={<Building2 />} title="Employer profile" copy="Company details and brand identity" status="Next milestone" />
+          <Link to="/onboarding" className="block rounded-2xl border border-line bg-card p-5 transition hover:border-pine"><span className="grid size-10 place-items-center rounded-xl bg-[#e8f2ec] text-pine"><Building2 className="size-5" /></span><h2 className="mt-4 font-semibold">Employer profile</h2><p className="mt-2 text-sm leading-6 text-muted">Set up your organisation details and brand identity.</p><p className="mt-4 text-xs font-semibold uppercase tracking-wider text-clay">Profile setup</p></Link>
           <WorkspaceCard icon={<BriefcaseBusiness />} title="Jobs" copy="Create, publish and manage vacancies" status="Next milestone" />
           <WorkspaceCard icon={<Users />} title="Applicants" copy="Review applications and hiring stages" status="Next milestone" />
           <WorkspaceCard icon={<FileText />} title="CV builder" copy="Build and export candidate CVs" status="Next milestone" />
@@ -303,6 +375,7 @@ export function App() {
     <Route path="/auth/callback" element={<AuthCallbackPage />} />
     <Route path="/reset-password" element={<ResetPasswordPage />} />
     <Route path="/dashboard" element={<RequireEmployer><DashboardPage /></RequireEmployer>} />
+    <Route path="/onboarding" element={<RequireEmployer><EmployerOnboardingPage /></RequireEmployer>} />
     <Route path="/privacy" element={<AuthLayout><h1 className="font-display text-3xl">Privacy & Operator Information</h1><p className="mt-4 text-sm leading-7 text-muted">This page will contain the final operator identity, data practices, contact details and privacy request process before public launch. Those details must be supplied and verified by the platform owner.</p><Link to="/" className="mt-6 inline-block font-semibold text-pine">Back home</Link></AuthLayout>} />
     <Route path="/terms" element={<AuthLayout><h1 className="font-display text-3xl">Terms of Use</h1><p className="mt-4 text-sm leading-7 text-muted">The final terms must be reviewed and approved before public launch. This placeholder is not a legal agreement.</p><Link to="/" className="mt-6 inline-block font-semibold text-pine">Back home</Link></AuthLayout>} />
     <Route path="*" element={<Navigate to="/" replace />} />
