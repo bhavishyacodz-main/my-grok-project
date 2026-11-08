@@ -24,6 +24,7 @@ import {
 import { useSupabaseAuth } from "./lib/auth/supabase-context";
 import { validateEmployerCredentials } from "./lib/auth/validation";
 import { validateEmployerProfile } from "./lib/employer/validation";
+import { validateJobDraft, type JobDraftInput } from "./lib/jobs/validation";
 import { supabase } from "./lib/supabase/client";
 
 function Brand({ compact = false }: { compact?: boolean }) {
@@ -342,7 +343,7 @@ function DashboardPage() {
         <div className="mt-8 rounded-2xl border border-line bg-card p-6"><div className="flex items-start gap-3"><CircleHelp className="mt-1 size-5 shrink-0 text-pine" /><div><h2 className="font-semibold">Authentication foundation is connected in this branch</h2><p className="mt-2 max-w-3xl text-sm leading-6 text-muted">This is the first migration milestone, not the completed employer dashboard. Job management, application tracking, hiring-page templates and private CV storage will be migrated and tested in the next milestones. Your existing production app and data have not been changed.</p></div></div></div>
         <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <Link to="/onboarding" className="block rounded-2xl border border-line bg-card p-5 transition hover:border-pine"><span className="grid size-10 place-items-center rounded-xl bg-[#e8f2ec] text-pine"><Building2 className="size-5" /></span><h2 className="mt-4 font-semibold">Employer profile</h2><p className="mt-2 text-sm leading-6 text-muted">Set up your organisation details and brand identity.</p><p className="mt-4 text-xs font-semibold uppercase tracking-wider text-clay">Profile setup</p></Link>
-          <WorkspaceCard icon={<BriefcaseBusiness />} title="Jobs" copy="Create, publish and manage vacancies" status="Next milestone" />
+          <Link to="/jobs" className="block rounded-2xl border border-line bg-card p-5 transition hover:border-pine"><span className="grid size-10 place-items-center rounded-xl bg-[#e8f2ec] text-pine"><BriefcaseBusiness className="size-5" /></span><h2 className="mt-4 font-semibold">Jobs</h2><p className="mt-2 text-sm leading-6 text-muted">Create and manage private vacancy drafts.</p><p className="mt-4 text-xs font-semibold uppercase tracking-wider text-clay">Draft management</p></Link>
           <WorkspaceCard icon={<Users />} title="Applicants" copy="Review applications and hiring stages" status="Next milestone" />
           <WorkspaceCard icon={<FileText />} title="CV builder" copy="Build and export candidate CVs" status="Next milestone" />
         </div>
@@ -353,6 +354,123 @@ function DashboardPage() {
 
 function WorkspaceCard({ icon, title, copy, status }: { icon: ReactNode; title: string; copy: string; status: string }) {
   return <section className="rounded-2xl border border-line bg-card p-5"><span className="grid size-10 place-items-center rounded-xl bg-[#e8f2ec] text-pine [&>svg]:size-5">{icon}</span><h2 className="mt-4 font-semibold">{title}</h2><p className="mt-2 text-sm leading-6 text-muted">{copy}</p><p className="mt-4 text-xs font-semibold uppercase tracking-wider text-clay">{status}</p></section>;
+}
+
+type EmployerJob = {
+  id: string;
+  title: string;
+  slug: string;
+  status: "draft" | "published" | "paused" | "closed" | "archived";
+  category: string;
+  location: string;
+  employment_type: string;
+  work_mode: string;
+  created_at: string;
+};
+
+function EmployerJobsPage() {
+  const auth = useSupabaseAuth();
+  const [jobs, setJobs] = useState<EmployerJob[]>([]);
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("");
+  const [description, setDescription] = useState("");
+  const [location, setLocation] = useState("");
+  const [employmentType, setEmploymentType] = useState<JobDraftInput["employmentType"]>("full-time");
+  const [workMode, setWorkMode] = useState<JobDraftInput["workMode"]>("onsite");
+  const [busy, setBusy] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+
+  async function loadJobs() {
+    if (!supabase) { setLoading(false); setError("Supabase is not configured for this preview."); return; }
+    setLoading(true);
+    setError("");
+    try {
+      const { data, error: invokeError } = await supabase.functions.invoke("employer-jobs", { body: { action: "list" } });
+      if (invokeError) throw invokeError;
+      if (data?.error) throw new Error(data.error);
+      setJobs(Array.isArray(data?.jobs) ? data.jobs as EmployerJob[] : []);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not load your jobs.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => { void loadJobs(); }, []);
+
+  async function createDraft(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const validation = validateJobDraft({ title, category, description, location, employmentType, workMode });
+    if (!validation.ok) { setError(validation.message); return; }
+    if (!supabase) { setError("Supabase is not configured for this preview."); return; }
+    setBusy(true); setError(""); setNotice("");
+    try {
+      const { data, error: invokeError } = await supabase.functions.invoke("employer-jobs", {
+        body: { action: "create", ...validation.value },
+      });
+      if (invokeError) throw invokeError;
+      if (data?.error) throw new Error(data.error);
+      setJobs((current) => [data.job as EmployerJob, ...current]);
+      setTitle(""); setCategory(""); setDescription(""); setLocation("");
+      setNotice("Draft saved. It is not public and cannot receive applications yet.");
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not save this job draft.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function changeStatus(jobId: string, status: "draft" | "archived") {
+    if (!supabase) return;
+    setBusy(true); setError(""); setNotice("");
+    try {
+      const { data, error: invokeError } = await supabase.functions.invoke("employer-jobs", {
+        body: { action: "update_status", jobId, status },
+      });
+      if (invokeError) throw invokeError;
+      if (data?.error) throw new Error(data.error);
+      setJobs((current) => current.map((job) => job.id === jobId ? data.job as EmployerJob : job));
+      setNotice(status === "archived" ? "Job draft archived." : "Job moved back to draft.");
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not update this job.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <main className="min-h-screen bg-paper text-ink">
+      <header className="border-b border-line bg-card"><div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5"><Brand /><div className="flex items-center gap-4"><span className="hidden text-sm text-muted sm:inline">{auth.user?.email}</span><Link to="/dashboard" className="text-sm font-semibold text-pine">Workspace</Link></div></div></header>
+      <div className="mx-auto max-w-7xl px-6 py-10 lg:px-10">
+        <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-semibold uppercase tracking-[.16em] text-pine">Employer workspace</p><h1 className="mt-2 font-display text-4xl">Your jobs</h1><p className="mt-3 text-muted">Create and organise vacancy drafts for your hiring pages.</p></div><span className="rounded-full bg-[#fff1df] px-4 py-2 text-xs font-semibold text-[#8b4a1e]">Draft-only milestone</span></div>
+        {error && <Notice tone="error">{error}</Notice>}
+        {notice && <Notice tone="success">{notice}</Notice>}
+        <div className="mt-8 grid items-start gap-8 lg:grid-cols-[.9fr_1.1fr]">
+          <section className="rounded-2xl border border-line bg-card p-6">
+            <h2 className="font-display text-2xl">Create a job draft</h2>
+            <p className="mt-2 text-sm leading-6 text-muted">Drafts are private. Publishing will be enabled after the public hiring pages and application safeguards are ready.</p>
+            <form onSubmit={(event) => void createDraft(event)} className="mt-6 space-y-4">
+              <label className="block text-sm font-semibold">Job title<input required minLength={5} maxLength={120} value={title} onChange={(event) => setTitle(event.target.value)} placeholder="e.g. Customer Support Associate" className="mt-2 w-full rounded-xl border border-line bg-white px-4 py-3 font-normal" /></label>
+              <label className="block text-sm font-semibold">Category<input maxLength={80} value={category} onChange={(event) => setCategory(event.target.value)} placeholder="e.g. Customer service" className="mt-2 w-full rounded-xl border border-line bg-white px-4 py-3 font-normal" /></label>
+              <label className="block text-sm font-semibold">Description<textarea required minLength={30} maxLength={12000} rows={5} value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Describe the role, responsibilities and expectations." className="mt-2 w-full rounded-xl border border-line bg-white px-4 py-3 font-normal" /></label>
+              <label className="block text-sm font-semibold">Location<input maxLength={120} value={location} onChange={(event) => setLocation(event.target.value)} placeholder="City, state or remote" className="mt-2 w-full rounded-xl border border-line bg-white px-4 py-3 font-normal" /></label>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <label className="block text-sm font-semibold">Employment type<select value={employmentType} onChange={(event) => setEmploymentType(event.target.value as JobDraftInput["employmentType"])} className="mt-2 w-full rounded-xl border border-line bg-white px-3 py-3 font-normal"><option value="full-time">Full-time</option><option value="part-time">Part-time</option><option value="contract">Contract</option><option value="internship">Internship</option><option value="temporary">Temporary</option><option value="apprenticeship">Apprenticeship</option><option value="freelance">Freelance</option></select></label>
+                <label className="block text-sm font-semibold">Work mode<select value={workMode} onChange={(event) => setWorkMode(event.target.value as JobDraftInput["workMode"])} className="mt-2 w-full rounded-xl border border-line bg-white px-3 py-3 font-normal"><option value="onsite">On-site</option><option value="hybrid">Hybrid</option><option value="remote">Remote</option></select></label>
+              </div>
+              <button type="submit" disabled={busy || !auth.isConfigured} className="w-full rounded-xl bg-pine px-4 py-3 font-semibold text-white hover:bg-[#09563f] disabled:opacity-50">{busy ? "Saving…" : "Save as private draft"}</button>
+            </form>
+          </section>
+          <section className="rounded-2xl border border-line bg-card p-6">
+            <div className="flex items-center justify-between gap-3"><div><h2 className="font-display text-2xl">Your vacancies</h2><p className="mt-1 text-sm text-muted">Only jobs owned by your account are returned.</p></div><button onClick={() => void loadJobs()} disabled={loading || busy} className="rounded-full border border-line px-4 py-2 text-sm font-semibold hover:bg-white">Refresh</button></div>
+            {loading ? <p className="py-12 text-center text-sm text-muted">Loading your jobs…</p> : jobs.length === 0 ? <div className="py-12 text-center"><BriefcaseBusiness className="mx-auto size-8 text-pine" /><h3 className="mt-4 font-semibold">No job drafts yet</h3><p className="mt-2 text-sm text-muted">Create your first vacancy draft using the form.</p></div> : <div className="mt-6 space-y-3">{jobs.map((job) => <article key={job.id} className="rounded-xl border border-line bg-white p-4"><div className="flex flex-wrap items-start justify-between gap-3"><div><h3 className="font-semibold">{job.title}</h3><p className="mt-1 text-sm text-muted">{[job.category, job.location, job.employment_type, job.work_mode].filter(Boolean).join(" · ")}</p></div><span className="rounded-full bg-[#f4efe6] px-3 py-1 text-xs font-semibold capitalize text-muted">{job.status.replace("_", " ")}</span></div><div className="mt-4 flex gap-2">{job.status === "archived" ? <button onClick={() => void changeStatus(job.id, "draft")} disabled={busy} className="rounded-full border border-line px-3 py-1.5 text-xs font-semibold">Restore draft</button> : <button onClick={() => void changeStatus(job.id, "archived")} disabled={busy} className="rounded-full border border-line px-3 py-1.5 text-xs font-semibold">Archive</button>}</div></article>)}</div>}
+          </section>
+        </div>
+      </div>
+    </main>
+  );
 }
 
 function AuthLayout({ children }: { children: ReactNode }) {
@@ -376,6 +494,7 @@ export function App() {
     <Route path="/reset-password" element={<ResetPasswordPage />} />
     <Route path="/dashboard" element={<RequireEmployer><DashboardPage /></RequireEmployer>} />
     <Route path="/onboarding" element={<RequireEmployer><EmployerOnboardingPage /></RequireEmployer>} />
+    <Route path="/jobs" element={<RequireEmployer><EmployerJobsPage /></RequireEmployer>} />
     <Route path="/privacy" element={<AuthLayout><h1 className="font-display text-3xl">Privacy & Operator Information</h1><p className="mt-4 text-sm leading-7 text-muted">This page will contain the final operator identity, data practices, contact details and privacy request process before public launch. Those details must be supplied and verified by the platform owner.</p><Link to="/" className="mt-6 inline-block font-semibold text-pine">Back home</Link></AuthLayout>} />
     <Route path="/terms" element={<AuthLayout><h1 className="font-display text-3xl">Terms of Use</h1><p className="mt-4 text-sm leading-7 text-muted">The final terms must be reviewed and approved before public launch. This placeholder is not a legal agreement.</p><Link to="/" className="mt-6 inline-block font-semibold text-pine">Back home</Link></AuthLayout>} />
     <Route path="*" element={<Navigate to="/" replace />} />
