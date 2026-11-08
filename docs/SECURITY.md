@@ -14,6 +14,10 @@ Never expose database URLs, database passwords, Supabase service-role keys, Supa
 
 The function fails closed for browser origins not listed in the `ALLOWED_ORIGINS` Supabase Function secret, apart from local development origins. Before deployment, set this secret to the exact production/preview origins intended to call the function.
 
+## Employer job function
+
+`supabase/functions/employer-jobs` verifies the caller's Supabase access token and confirmed email, checks that the employer profile belongs to the same auth UUID, and filters every job list/update by that UUID. Job creation always writes `status = draft`. The endpoint does not permit public publishing. The service-role key remains inside the Edge Function only.
+
 ## Authorization
 
 - RLS must be enabled on every exposed table.
