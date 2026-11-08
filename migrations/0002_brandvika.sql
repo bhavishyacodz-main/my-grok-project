@@ -279,3 +279,10 @@ begin
   end if;
 end
 $brandvika_default_privileges$;
+
+
+-- Cover the remaining foreign keys so deletes/joins remain efficient.
+create index if not exists application_stage_history_application_idx
+  on application_stage_history (application_id);
+create index if not exists consent_records_application_idx
+  on consent_records (application_id);
