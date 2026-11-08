@@ -22,6 +22,7 @@ import {
   Users,
 } from "lucide-react";
 import { useSupabaseAuth } from "./lib/auth/supabase-context";
+import { validateEmployerCredentials } from "./lib/auth/validation";
 
 function Brand({ compact = false }: { compact?: boolean }) {
   return (
@@ -145,14 +146,16 @@ function LoginPage() {
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const validation = validateEmployerCredentials(email, password, mode);
+    if (!validation.ok) { setError(validation.message); return; }
     setBusy(true); setError(""); setMessage("");
     try {
       if (mode === "signup") {
-        const confirmed = await auth.signUp(email.trim(), password);
+        const confirmed = await auth.signUp(validation.email, password);
         setMessage(confirmed ? "Your account is ready. You can sign in now." : "Check your email and confirm your address before signing in.");
         setMode("signin");
       } else {
-        await auth.signInWithPassword(email.trim(), password);
+        await auth.signInWithPassword(validation.email, password);
         navigate("/dashboard", { replace: true });
       }
     } catch (cause) {
