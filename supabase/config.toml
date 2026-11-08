@@ -1,0 +1,2 @@
+[functions.employer-bootstrap]
+verify_jwt = true
