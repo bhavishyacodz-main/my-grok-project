@@ -12,8 +12,10 @@ Brandvika is an employer-side recruitment workspace for small employers. Candida
 | Employer Google sign-in UI | Implemented; provider setup and OAuth flow not verified |
 | Email confirmation and password recovery UI | Implemented; email delivery and recovery flow not verified |
 | Protected employer dashboard | Initial shell only |
-| Employer profile and verification | Not migrated |
-| Job CRUD and lifecycle | Not migrated |
+| Employer profile onboarding | UI and authenticated Edge Function committed; not deployed or integration-tested |
+| Employer profile editing and verification | Not migrated |
+| Job draft creation and employer-scoped listing | UI and authenticated Edge Function committed; not deployed or integration-tested |
+| Job editing, publishing and full lifecycle | Not migrated; publishing intentionally disabled |
 | Four white-label hiring templates | Not migrated and not verified |
 | Anonymous candidate applications | Not migrated |
 | Private CV uploads | Not migrated |
