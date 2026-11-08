@@ -18,6 +18,10 @@ Configure only in the Vercel Preview environment for the development branch:
 
 Use a dedicated development Supabase project. Do not add service-role or secret keys to Vercel client-visible variables.
 
+## Supabase Edge Function setup still required
+
+Deploy `employer-bootstrap` and `employer-jobs` only to the isolated development Supabase project after reviewing the code. Set the `ALLOWED_ORIGINS` Function secret to the exact development preview origin(s) and local development origin(s) that should call the functions. Supabase supplies its project URL, anon key and service-role key to the Edge Function runtime; do not copy the service-role key into Vercel or browser variables. Test with a verified employer account and confirm cross-account job access is rejected.
+
 ## Supabase Auth setup still required
 
 - Enable email/password sign-in and configure email confirmation.
