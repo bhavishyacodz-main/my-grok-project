@@ -22,6 +22,7 @@ import {
   Users,
 } from "lucide-react";
 import { useSupabaseAuth } from "./lib/auth/supabase-context";
+import { TemplatesPage } from "./components/TemplatesPage";
 import { validateEmployerCredentials } from "./lib/auth/validation";
 import { validateEmployerProfile } from "./lib/employer/validation";
 import { validateJobDraft, type JobDraftInput } from "./lib/jobs/validation";
@@ -492,6 +493,7 @@ export function App() {
     <Route path="/login" element={<LoginPage />} />
     <Route path="/auth/callback" element={<AuthCallbackPage />} />
     <Route path="/reset-password" element={<ResetPasswordPage />} />
+    <Route path="/templates" element={<TemplatesPage />} />
     <Route path="/dashboard" element={<RequireEmployer><DashboardPage /></RequireEmployer>} />
     <Route path="/onboarding" element={<RequireEmployer><EmployerOnboardingPage /></RequireEmployer>} />
     <Route path="/jobs" element={<RequireEmployer><EmployerJobsPage /></RequireEmployer>} />
