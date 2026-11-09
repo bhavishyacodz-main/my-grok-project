@@ -46,12 +46,26 @@ export function SupabaseAuthProvider({ children }: { children: ReactNode }) {
     }
 
     let active = true;
-    void supabase.auth.getSession().then(({ data, error }) => {
-      if (!active) return;
-      if (error) console.error("[auth] Could not restore session:", error.message);
-      setSession(data.session);
-      setLoading(false);
-    });
+    void supabase.auth.getSession()
+      .then(({ data, error }) => {
+        if (!active) return;
+        if (error) {
+          console.error("[auth] Could not restore session:", error.message);
+          setSession(null);
+        } else {
+          setSession(data.session);
+        }
+        setLoading(false);
+      })
+      .catch((cause: unknown) => {
+        if (!active) return;
+        console.error(
+          "[auth] Session restoration failed:",
+          cause instanceof Error ? cause.message : "Unknown error",
+        );
+        setSession(null);
+        setLoading(false);
+      });
 
     const { data } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       if (!active) return;
