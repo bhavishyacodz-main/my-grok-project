@@ -1,17 +1,11 @@
 import { createClient } from "npm:@supabase/supabase-js@2.119.0";
+import { isAllowedRequestOrigin, parseAllowedOrigins } from "../../../src/lib/security/origin-allowlist.ts";
 import { validateJobDraft, type JobDraftInput } from "../../../src/lib/jobs/validation.ts";
 
-const allowedOrigins = (Deno.env.get("ALLOWED_ORIGINS") ?? "")
-  .split(",")
-  .map((origin) => origin.trim())
-  .filter(Boolean);
+const allowedOrigins = parseAllowedOrigins(Deno.env.get("ALLOWED_ORIGINS"));
 
 function corsHeaders(origin: string | null): Record<string, string> {
-  const permitted = origin && (
-    allowedOrigins.includes(origin) ||
-    origin === "http://localhost:8080" ||
-    origin === "http://127.0.0.1:8080"
-  );
+  const permitted = isAllowedRequestOrigin(origin, allowedOrigins);
   return {
     "Access-Control-Allow-Origin": permitted ? origin : "null",
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
