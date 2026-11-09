@@ -48,7 +48,7 @@ export const hiringTemplates: readonly HiringTemplate[] = [
     surface: "#f1ebfa",
     sampleRole: "Junior Game Designer",
     sampleLocation: "Remote · India",
-    sections: ["Our studio", "The project", "Your craft", "Skills & portfolio", "Join the team"],
+    sections: ["Our studio", "The project", "Your craft", "Skills & portfolio", "Join the team & apply"],
   },
   {
     id: "cultural-festival",
