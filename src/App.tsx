@@ -27,6 +27,7 @@ import { validateEmployerCredentials } from "./lib/auth/validation";
 import { validateEmployerProfile } from "./lib/employer/validation";
 import { validateJobDraft, type JobDraftInput } from "./lib/jobs/validation";
 import { supabase } from "./lib/supabase/client";
+import { getAuthCallbackError } from "./lib/auth/callback-error";
 
 function Brand({ compact = false }: { compact?: boolean }) {
   return (
@@ -240,15 +241,21 @@ function ResetPasswordPage() {
 
 function AuthCallbackPage() {
   const navigate = useNavigate();
-  const [message, setMessage] = useState("Confirming your secure sign-in…");
   const auth = useSupabaseAuth();
+  const callbackError = getAuthCallbackError(new URLSearchParams(window.location.search));
+  const [message, setMessage] = useState(
+    callbackError ?? "Confirming your secure sign-in…",
+  );
+
   useEffect(() => {
+    if (callbackError) return;
     if (auth.loading) return;
     if (auth.user) navigate("/dashboard", { replace: true });
     else if (!auth.isConfigured) setMessage("Supabase is not configured for this deployment.");
     else setMessage("We could not confirm your sign-in. Please return to the login page and try again.");
-  }, [auth.loading, auth.user, auth.isConfigured, navigate]);
-  return <AuthLayout><div className="text-center"><CheckCircle2 className="mx-auto size-10 text-pine" /><h1 className="mt-5 font-display text-2xl">Signing you in</h1><p className="mt-3 text-sm text-muted">{message}</p><Link to="/login" className="mt-6 inline-block font-semibold text-pine">Return to sign in</Link></div></AuthLayout>;
+  }, [auth.loading, auth.user, auth.isConfigured, navigate, callbackError]);
+
+  return <AuthLayout><div className="text-center"><CheckCircle2 className="mx-auto size-10 text-pine" /><h1 className="mt-5 font-display text-2xl">Signing you in</h1><p role="status" className="mt-3 text-sm text-muted">{message}</p><Link to="/login" className="mt-6 inline-block font-semibold text-pine">Return to sign in</Link></div></AuthLayout>;
 }
 
 function EmployerOnboardingPage() {
