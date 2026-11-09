@@ -21,8 +21,8 @@ test("falls back to the provider error code when no description is supplied", ()
 });
 
 test("limits and removes control characters from provider descriptions", () => {
-  const result = getAuthCallbackError(new URLSearchParams(`error_description=${encodeURIComponent("bad\\n" + "x".repeat(300))}`));
+  const result = getAuthCallbackError(new URLSearchParams(`error_description=${encodeURIComponent("bad\n" + "x".repeat(300))}`));
   assert.ok(result);
   assert.equal(result.length, 240 + "Sign-in was not completed: ".length);
-  assert.ok(!result.includes("\\n"));
+  assert.ok(!result.includes("\n"));
 });
