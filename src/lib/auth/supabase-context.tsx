@@ -89,7 +89,7 @@ export function SupabaseAuthProvider({ children }: { children: ReactNode }) {
     const { data, error } = await client.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+      options: { emailRedirectTo: getAuthRedirectUrl(window.location.origin, AUTH_CALLBACK_PATH) },
     });
     if (error) throw error;
     return Boolean(data.session && data.user?.email_confirmed_at);
