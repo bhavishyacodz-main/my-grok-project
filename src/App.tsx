@@ -47,6 +47,7 @@ function HomePage() {
         <Brand />
         <nav className="flex items-center gap-3">
           <a href="#how-it-works" className="hidden text-sm text-muted hover:text-ink sm:inline">How it works</a>
+          <Link to="/templates" className="hidden text-sm text-muted hover:text-ink sm:inline">Hiring templates</Link>
           <Link to={user ? "/dashboard" : "/login"} className="rounded-full border border-line px-5 py-2.5 text-sm font-semibold hover:bg-white">
             {user ? "Workspace" : "Employer sign in"}
           </Link>
