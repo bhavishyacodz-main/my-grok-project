@@ -12,7 +12,6 @@ import {
   ArrowRight,
   BriefcaseBusiness,
   Building2,
-  CheckCircle2,
   CircleHelp,
   FileText,
   LayoutDashboard,
