@@ -3,12 +3,11 @@
 ## Verified so far
 
 - Vercel successfully ran `tsc --noEmit` for the active migration frontend.
-- Five Node-based employer-auth validation unit tests passed.
-- Vite completed the static production build and generated `dist/`.
+- All 20 Node-based validation and catalogue tests passed in the Vercel build, including four new auth redirect URL tests.
+- Vite completed the production build and generated `dist/`.
+- The Supabase auth client now builds callback and password-recovery URLs from the current browser origin, with a unit test rejecting cross-origin callback targets.
 
-These checks do not verify authentication against a configured Supabase project, RLS, Storage, Edge Functions or complete user journeys.
-
-- Three Node-based hiring template catalogue tests added to the build test script; execution is pending the next preview build.\n\n## Pending automated tests
+These checks do not verify authentication against a configured development Supabase project, Google OAuth credentials, RLS, Storage, Edge Functions or complete user journeys.\n\n## Pending automated tests
 
 - Vitest and React Testing Library component tests for auth state, forms and route guards.
 - Playwright browser tests for signup, email confirmation, Google OAuth callback, protected routes and sign-out.
