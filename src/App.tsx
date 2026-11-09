@@ -204,7 +204,7 @@ function LoginPage() {
       <form onSubmit={(event) => void submit(event)} className="space-y-4">
         <label className="block text-sm font-semibold">Email address<input required type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} className="mt-2 w-full rounded-xl border border-line bg-white px-4 py-3 font-normal outline-none focus:border-pine" placeholder="you@company.com" /></label>
         <label className="block text-sm font-semibold">Password<input required minLength={8} type="password" autoComplete={mode === "signup" ? "new-password" : "current-password"} value={password} onChange={(event) => setPassword(event.target.value)} className="mt-2 w-full rounded-xl border border-line bg-white px-4 py-3 font-normal outline-none focus:border-pine" placeholder="At least 8 characters" /></label>
-        <button type="submit" disabled={!auth.isConfigured || busy} className="w-full rounded-xl bg-pine px-4 py-3 font-semibold text-white hover:bg-[#09563f] disabled:opacity-50">{busy ? "Please wait…" : mode === "signup" ? "Create employer account" : "Sign in"}</button>
+        <button type="submit" disabled={!auth.isConfigured || busy} className="w-full rounded-xl bg-pine px-4 py-3 font-semibold text-white transition hover:bg-[#09563f] disabled:cursor-not-allowed disabled:opacity-50">{busy ? "Please wait…" : mode === "signup" ? "Create employer account" : "Sign in"}</button>
       </form>
 
       {mode === "signin" && <button type="button" disabled={!auth.isConfigured || busy} onClick={() => void reset()} className="mt-4 w-full text-center text-sm font-semibold text-pine hover:underline disabled:opacity-50">Forgot password?</button>}
@@ -221,22 +221,52 @@ function ResetPasswordPage() {
   const auth = useSupabaseAuth();
   const navigate = useNavigate();
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault(); setBusy(true); setError(""); setMessage("");
+    event.preventDefault();
+    if (password.length < 8) { setError("Use at least eight characters for your new password."); return; }
+    if (password !== confirmPassword) { setError("The passwords do not match."); return; }
+    if (!auth.session) { setError("Your password-reset link is missing or has expired. Request a new link and try again."); return; }
+    setBusy(true);
+    setError("");
+    setMessage("");
     try {
       await auth.updatePassword(password);
-      setMessage("Password updated. You can continue to your workspace.");
-      window.setTimeout(() => navigate("/dashboard", { replace: true }), 900);
+      setMessage("Password updated successfully. Your account is ready.");
+      setPassword("");
+      setConfirmPassword("");
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Could not update your password.");
-    } finally { setBusy(false); }
+      setError(cause instanceof Error ? cause.message : "Could not update your password. Request a new reset link and try again.");
+    } finally {
+      setBusy(false);
+    }
   }
 
-  return <AuthLayout><Link to="/login" className="text-sm text-muted">← Back to sign in</Link><h1 className="mt-8 font-display text-3xl">Choose a new password</h1><p className="mt-3 text-sm leading-6 text-muted">Use at least eight characters.</p>{error && <Notice tone="error">{error}</Notice>}{message && <Notice tone="success">{message}</Notice>}<form onSubmit={(event) => void submit(event)} className="mt-6 space-y-4"><label className="block text-sm font-semibold">New password<input required minLength={8} type="password" autoComplete="new-password" value={password} onChange={(event) => setPassword(event.target.value)} className="mt-2 w-full rounded-xl border border-line bg-white px-4 py-3 font-normal" /></label><button disabled={busy || !auth.isConfigured} className="w-full rounded-xl bg-pine px-4 py-3 font-semibold text-white disabled:opacity-50">{busy ? "Saving…" : "Update password"}</button></form></AuthLayout>;
+  if (auth.loading) return <LoadingPage />;
+
+  return (
+    <AuthLayout>
+      <Link to="/login" className="text-sm text-muted hover:text-pine">← Back to sign in</Link>
+      <h1 className="mt-8 font-display text-3xl">Choose a new password</h1>
+      <p className="mt-3 text-sm leading-6 text-muted">Use at least eight characters and confirm the new password below.</p>
+      {!auth.session && <Notice tone="warning">Open this page from a valid password-reset email. If your link expired, return to sign in and request another one.</Notice>}
+      {error && <Notice tone="error">{error}</Notice>}
+      {message && <Notice tone="success">{message}</Notice>}
+      {message ? (
+        <button type="button" onClick={() => navigate("/dashboard", { replace: true })} className="mt-6 w-full rounded-xl bg-pine px-4 py-3 font-semibold text-white transition hover:bg-[#09563f]">Continue to workspace</button>
+      ) : (
+        <form onSubmit={(event) => void submit(event)} className="mt-6 space-y-4">
+          <label className="block text-sm font-semibold">New password<input required minLength={8} disabled={busy || !auth.session} type="password" autoComplete="new-password" value={password} onChange={(event) => setPassword(event.target.value)} className="mt-2 w-full rounded-xl border border-line bg-white px-4 py-3 font-normal" /></label>
+          <label className="block text-sm font-semibold">Confirm new password<input required minLength={8} disabled={busy || !auth.session} type="password" autoComplete="new-password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} className="mt-2 w-full rounded-xl border border-line bg-white px-4 py-3 font-normal" /></label>
+          <button type="submit" disabled={busy || !auth.isConfigured || !auth.session} className="w-full rounded-xl bg-pine px-4 py-3 font-semibold text-white transition hover:bg-[#09563f] disabled:cursor-not-allowed disabled:opacity-50">{busy ? "Saving…" : "Update password"}</button>
+        </form>
+      )}
+    </AuthLayout>
+  );
 }
 
 function AuthCallbackPage() {
@@ -339,15 +369,23 @@ function DashboardPage() {
   const { user, signOut } = useSupabaseAuth();
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
+  const [logoutError, setLogoutError] = useState("");
   async function logout() {
     setBusy(true);
-    try { await signOut(); navigate("/", { replace: true }); }
-    catch { setBusy(false); }
+    setLogoutError("");
+    try {
+      await signOut();
+      navigate("/", { replace: true });
+    } catch (cause) {
+      setLogoutError(cause instanceof Error ? cause.message : "Could not sign out. Please try again.");
+      setBusy(false);
+    }
   }
   return (
     <main className="min-h-screen bg-paper text-ink">
       <header className="border-b border-line bg-card"><div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5"><Brand /><div className="flex items-center gap-4"><span className="hidden text-sm text-muted sm:inline">{user?.email}</span><button onClick={() => void logout()} disabled={busy} className="inline-flex items-center gap-2 rounded-full border border-line px-4 py-2 text-sm font-semibold hover:bg-white"><LogOut className="size-4" />{busy ? "Signing out…" : "Sign out"}</button></div></div></header>
       <div className="mx-auto max-w-7xl px-6 py-10 lg:px-10">
+        {logoutError && <Notice tone="error">{logoutError}</Notice>}
         <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-semibold uppercase tracking-[.16em] text-pine">Employer workspace</p><h1 className="mt-2 font-display text-4xl">Your hiring dashboard</h1><p className="mt-3 text-muted">Signed in as {user?.email ?? "employer"}.</p></div><span className="rounded-full bg-[#fff1df] px-4 py-2 text-xs font-semibold text-[#8b4a1e]">Migration preview</span></div>
         <div className="mt-8 rounded-2xl border border-line bg-card p-6"><div className="flex items-start gap-3"><CircleHelp className="mt-1 size-5 shrink-0 text-pine" /><div><h2 className="font-semibold">Authentication foundation is connected in this branch</h2><p className="mt-2 max-w-3xl text-sm leading-6 text-muted">This is the first migration milestone, not the completed employer dashboard. Job management, application tracking, hiring-page templates and private CV storage will be migrated and tested in the next milestones. Your existing production app and data have not been changed.</p></div></div></div>
         <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -488,7 +526,7 @@ function AuthLayout({ children }: { children: ReactNode }) {
 
 function Notice({ children, tone }: { children: ReactNode; tone: "warning" | "error" | "success" }) {
   const styles = { warning: "border-[#e8d2a4] bg-[#fff6df] text-[#76551b]", error: "border-[#e9c7c0] bg-[#fff0ed] text-danger", success: "border-[#c8dfd1] bg-[#edf7f0] text-pine" };
-  return <p role="status" className={`mt-5 rounded-xl border px-4 py-3 text-sm leading-6 ${styles[tone]}`}>{children}</p>;
+  return <p role={tone === "error" ? "alert" : "status"} aria-live={tone === "error" ? "assertive" : "polite"} className={`mt-5 rounded-xl border px-4 py-3 text-sm leading-6 ${styles[tone]}`}>{children}</p>;
 }
 
 function LoadingPage() {
