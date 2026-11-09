@@ -35,3 +35,14 @@ Deploy `employer-bootstrap` and `employer-jobs` only to the isolated development
 ## Release gate
 
 Do not merge to `main`, change production environment variables, change production Auth providers, apply schema migrations to production, or promote a Vercel deployment until the test suite, RLS review, migration backup and explicit owner approval are complete.
+
+
+## Supabase Edge Function origin allowlist
+
+Before deploying `employer-bootstrap` or `employer-jobs`, configure the Edge Function secret `ALLOWED_ORIGINS` as a comma-separated list of exact origins, for example:
+
+```text
+https://your-production-domain.example,https://your-preview-domain.example
+```
+
+Use the actual deployed origins for the environment being configured. Do not include paths, wildcards, credentials, or trailing slashes. The functions also allow the local development origins `http://localhost:8080` and `http://127.0.0.1:8080`. If `ALLOWED_ORIGINS` is empty, hosted preview/production browser requests are denied by design. Keep service-role credentials only in Supabase Edge Function secrets; never add them to Vercel `VITE_*` variables.
