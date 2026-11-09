@@ -9,8 +9,9 @@
 - Supabase branching requires a cost-confirmation step; no billable branch was created.
 - Existing employer/jobs/applications operations still rely on legacy TanStack Start + Better Auth server functions and are not yet connected to the new SPA.
 - The employer dashboard still lacks live database-backed metrics, job editing, public publishing, candidate application intake and applicant tracking.
-- The four hiring templates, five CV templates, candidate application intake, applicant tracking, moderation and privacy workflows remain to be migrated.
+- Four hiring template designs now have an interactive public preview; employer-specific branding persistence, public job pages and publishing remain unimplemented.
+- Five CV templates, candidate application intake, applicant tracking, moderation and privacy workflows remain to be migrated.
 - The npm lockfile has not yet been regenerated and committed for the added dependencies. Vercel's install step resolved dependencies in its build environment.
-- Active frontend typecheck, auth/profile validation tests and Vite production build are verified only when the latest preview deployment completes.
+- Active frontend typecheck, auth/profile/job/template validation tests and Vite production build must be verified on the latest preview deployment.
 - No browser, RLS, Edge Function integration or accessibility tests have run.
 - Legal pages are placeholders pending confirmed operator details and qualified review.
