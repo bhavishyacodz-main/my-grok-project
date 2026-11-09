@@ -197,20 +197,20 @@ function LoginPage() {
       {message && <Notice tone="success">{message}</Notice>}
 
       <button type="button" disabled={!auth.isConfigured || busy} onClick={() => void google()} className="mt-7 flex w-full items-center justify-center gap-3 rounded-xl border border-line bg-white px-4 py-3 font-semibold hover:bg-[#faf7f1] disabled:opacity-50">
-        <span className="font-bold text-lg">G</span> Continue with Google
+        <span className="font-bold text-lg">G</span> {busy ? "Connecting…" : "Continue with Google"}
       </button>
       <div className="my-6 flex items-center gap-3 text-xs text-muted"><span className="h-px flex-1 bg-line" /> OR WITH EMAIL <span className="h-px flex-1 bg-line" /></div>
 
       <form onSubmit={(event) => void submit(event)} className="space-y-4">
-        <label className="block text-sm font-semibold">Email address<input required type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} className="mt-2 w-full rounded-xl border border-line bg-white px-4 py-3 font-normal outline-none focus:border-pine" placeholder="you@company.com" /></label>
-        <label className="block text-sm font-semibold">Password<input required minLength={8} type="password" autoComplete={mode === "signup" ? "new-password" : "current-password"} value={password} onChange={(event) => setPassword(event.target.value)} className="mt-2 w-full rounded-xl border border-line bg-white px-4 py-3 font-normal outline-none focus:border-pine" placeholder="At least 8 characters" /></label>
+        <label className="block text-sm font-semibold">Email address<input required type="email" autoComplete="email" value={email} disabled={busy} onChange={(event) => { setEmail(event.target.value); setError(""); }} className="mt-2 w-full rounded-xl border border-line bg-white px-4 py-3 font-normal outline-none focus:border-pine" placeholder="you@company.com" /></label>
+        <label className="block text-sm font-semibold">Password<input required minLength={8} type="password" autoComplete={mode === "signup" ? "new-password" : "current-password"} value={password} disabled={busy} onChange={(event) => { setPassword(event.target.value); setError(""); }} className="mt-2 w-full rounded-xl border border-line bg-white px-4 py-3 font-normal outline-none focus:border-pine" placeholder="At least 8 characters" /></label>
         <button type="submit" disabled={!auth.isConfigured || busy} className="w-full rounded-xl bg-pine px-4 py-3 font-semibold text-white transition hover:bg-[#09563f] disabled:cursor-not-allowed disabled:opacity-50">{busy ? "Please wait…" : mode === "signup" ? "Create employer account" : "Sign in"}</button>
       </form>
 
       {mode === "signin" && <button type="button" disabled={!auth.isConfigured || busy} onClick={() => void reset()} className="mt-4 w-full text-center text-sm font-semibold text-pine hover:underline disabled:opacity-50">Forgot password?</button>}
       <p className="mt-6 text-center text-sm text-muted">
         {mode === "signup" ? "Already registered? " : "New to Brandvika? "}
-        <button type="button" onClick={() => { setMode(mode === "signup" ? "signin" : "signup"); setError(""); setMessage(""); }} className="font-semibold text-pine hover:underline">{mode === "signup" ? "Sign in" : "Create an employer account"}</button>
+        <button type="button" disabled={busy} onClick={() => { setMode(mode === "signup" ? "signin" : "signup"); setError(""); setMessage(""); }} className="font-semibold text-pine hover:underline disabled:cursor-not-allowed disabled:opacity-50">{mode === "signup" ? "Sign in" : "Create an employer account"}</button>
       </p>
       <div className="mt-8 flex items-center justify-center gap-2 border-t border-line pt-6 text-xs text-muted"><ShieldCheck className="size-4 text-pine" /> Secure employer authentication</div>
     </AuthLayout>
@@ -285,7 +285,7 @@ function AuthCallbackPage() {
     else setMessage("We could not confirm your sign-in. Please return to the login page and try again.");
   }, [auth.loading, auth.user, auth.isConfigured, navigate, callbackError]);
 
-  return <AuthLayout><div className="text-center"><CheckCircle2 className="mx-auto size-10 text-pine" /><h1 className="mt-5 font-display text-2xl">Signing you in</h1><p role="status" className="mt-3 text-sm text-muted">{message}</p><Link to="/login" className="mt-6 inline-block font-semibold text-pine">Return to sign in</Link></div></AuthLayout>;
+  return <AuthLayout><div className="text-center"><CheckCircle2 className="mx-auto size-10 text-pine" /><h1 className="mt-5 font-display text-2xl">{callbackError ? "Sign-in needs attention" : "Signing you in"}</h1><p role="status" className="mt-3 text-sm text-muted">{message}</p><Link to="/login" className="mt-6 inline-block font-semibold text-pine">Return to sign in</Link></div></AuthLayout>;
 }
 
 function EmployerOnboardingPage() {
@@ -383,7 +383,7 @@ function DashboardPage() {
   }
   return (
     <main className="min-h-screen bg-paper text-ink">
-      <header className="border-b border-line bg-card"><div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5"><Brand /><div className="flex items-center gap-4"><span className="hidden text-sm text-muted sm:inline">{user?.email}</span><button onClick={() => void logout()} disabled={busy} className="inline-flex items-center gap-2 rounded-full border border-line px-4 py-2 text-sm font-semibold hover:bg-white"><LogOut className="size-4" />{busy ? "Signing out…" : "Sign out"}</button></div></div></header>
+      <header className="border-b border-line bg-card"><div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5"><Brand /><div className="flex items-center gap-4"><span className="hidden text-sm text-muted sm:inline">{user?.email}</span><button type="button" onClick={() => void logout()} disabled={busy} className="inline-flex items-center gap-2 rounded-full border border-line px-4 py-2 text-sm font-semibold hover:bg-white"><LogOut className="size-4" />{busy ? "Signing out…" : "Sign out"}</button></div></div></header>
       <div className="mx-auto max-w-7xl px-6 py-10 lg:px-10">
         {logoutError && <Notice tone="error">{logoutError}</Notice>}
         <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-semibold uppercase tracking-[.16em] text-pine">Employer workspace</p><h1 className="mt-2 font-display text-4xl">Your hiring dashboard</h1><p className="mt-3 text-muted">Signed in as {user?.email ?? "employer"}.</p></div><span className="rounded-full bg-[#fff1df] px-4 py-2 text-xs font-semibold text-[#8b4a1e]">Migration preview</span></div>
@@ -511,8 +511,8 @@ function EmployerJobsPage() {
             </form>
           </section>
           <section className="rounded-2xl border border-line bg-card p-6">
-            <div className="flex items-center justify-between gap-3"><div><h2 className="font-display text-2xl">Your vacancies</h2><p className="mt-1 text-sm text-muted">Only jobs owned by your account are returned.</p></div><button onClick={() => void loadJobs()} disabled={loading || busy} className="rounded-full border border-line px-4 py-2 text-sm font-semibold hover:bg-white">Refresh</button></div>
-            {loading ? <p className="py-12 text-center text-sm text-muted">Loading your jobs…</p> : jobs.length === 0 ? <div className="py-12 text-center"><BriefcaseBusiness className="mx-auto size-8 text-pine" /><h3 className="mt-4 font-semibold">No job drafts yet</h3><p className="mt-2 text-sm text-muted">Create your first vacancy draft using the form.</p></div> : <div className="mt-6 space-y-3">{jobs.map((job) => <article key={job.id} className="rounded-xl border border-line bg-white p-4"><div className="flex flex-wrap items-start justify-between gap-3"><div><h3 className="font-semibold">{job.title}</h3><p className="mt-1 text-sm text-muted">{[job.category, job.location, job.employment_type, job.work_mode].filter(Boolean).join(" · ")}</p></div><span className="rounded-full bg-[#f4efe6] px-3 py-1 text-xs font-semibold capitalize text-muted">{job.status.replace("_", " ")}</span></div><div className="mt-4 flex gap-2">{job.status === "archived" ? <button onClick={() => void changeStatus(job.id, "draft")} disabled={busy} className="rounded-full border border-line px-3 py-1.5 text-xs font-semibold">Restore draft</button> : <button onClick={() => void changeStatus(job.id, "archived")} disabled={busy} className="rounded-full border border-line px-3 py-1.5 text-xs font-semibold">Archive</button>}</div></article>)}</div>}
+            <div className="flex items-center justify-between gap-3"><div><h2 className="font-display text-2xl">Your vacancies</h2><p className="mt-1 text-sm text-muted">Only jobs owned by your account are returned.</p></div><button type="button" onClick={() => void loadJobs()} disabled={loading || busy} className="rounded-full border border-line px-4 py-2 text-sm font-semibold hover:bg-white">Refresh</button></div>
+            {loading ? <p className="py-12 text-center text-sm text-muted">Loading your jobs…</p> : jobs.length === 0 ? <div className="py-12 text-center"><BriefcaseBusiness className="mx-auto size-8 text-pine" /><h3 className="mt-4 font-semibold">No job drafts yet</h3><p className="mt-2 text-sm text-muted">Create your first vacancy draft using the form.</p></div> : <div className="mt-6 space-y-3">{jobs.map((job) => <article key={job.id} className="rounded-xl border border-line bg-white p-4"><div className="flex flex-wrap items-start justify-between gap-3"><div><h3 className="font-semibold">{job.title}</h3><p className="mt-1 text-sm text-muted">{[job.category, job.location, job.employment_type, job.work_mode].filter(Boolean).join(" · ")}</p></div><span className="rounded-full bg-[#f4efe6] px-3 py-1 text-xs font-semibold capitalize text-muted">{job.status.replace("_", " ")}</span></div><div className="mt-4 flex gap-2">{job.status === "archived" ? <button type="button" onClick={() => void changeStatus(job.id, "draft")} disabled={busy} className="rounded-full border border-line px-3 py-1.5 text-xs font-semibold">Restore draft</button> : <button type="button" onClick={() => void changeStatus(job.id, "archived")} disabled={busy} className="rounded-full border border-line px-3 py-1.5 text-xs font-semibold">Archive</button>}</div></article>)}</div>}
           </section>
         </div>
       </div>
