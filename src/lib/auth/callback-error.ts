@@ -5,8 +5,8 @@ export function getAuthCallbackError(params: URLSearchParams): string | null {
   if (!code && !description) return null;
 
   const safeDescription = (description ?? "")
-    .replace(/[\\u0000-\\u001f\\u007f]/g, " ")
-    .replace(/\\s+/g, " ")
+    .replace(/[\u0000-\u001f\u007f]/g, " ")
+    .replace(/\s+/g, " ")
     .trim()
     .slice(0, 240);
 
