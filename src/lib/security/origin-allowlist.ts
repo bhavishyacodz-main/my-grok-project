@@ -18,6 +18,7 @@ export function parseAllowedOrigins(value: string | undefined): Set<string> {
     if (
       (parsed.protocol !== "https:" && parsed.protocol !== "http:") ||
       parsed.origin !== entry ||
+      entry.includes("*") ||
       parsed.username ||
       parsed.password
     ) {
