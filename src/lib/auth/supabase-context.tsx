@@ -9,6 +9,7 @@ import {
 } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { isSupabaseConfigured, supabase } from "../supabase/client";
+import { AUTH_CALLBACK_PATH, getAuthRedirectUrl, PASSWORD_RESET_PATH } from "./redirects";
 
 type AuthContextValue = {
   user: User | null;
@@ -68,7 +69,7 @@ export function SupabaseAuthProvider({ children }: { children: ReactNode }) {
     const client = requireSupabase();
     const { error } = await client.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
+      options: { redirectTo: getAuthRedirectUrl(window.location.origin, AUTH_CALLBACK_PATH) },
     });
     if (error) throw error;
   }, []);
@@ -97,7 +98,7 @@ export function SupabaseAuthProvider({ children }: { children: ReactNode }) {
   const sendPasswordReset = useCallback(async (email: string) => {
     const client = requireSupabase();
     const { error } = await client.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
+      redirectTo: getAuthRedirectUrl(window.location.origin, PASSWORD_RESET_PATH),
     });
     if (error) throw error;
   }, []);
