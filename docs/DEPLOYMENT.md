@@ -27,7 +27,9 @@ Deploy `employer-bootstrap` and `employer-jobs` only to the isolated development
 - Enable email/password sign-in and configure email confirmation.
 - Configure Google OAuth in the development Supabase project.
 - Add the Supabase callback URI shown on the Supabase Google provider page to Google Cloud Console's Authorized redirect URIs.
-- Add the preview deployment callback URL to Supabase's redirect allow-list.
+- Add the exact Vercel preview callback URL (`https://YOUR-PREVIEW.vercel.app/auth/callback`) to Supabase's redirect allow-list.
+- Add `http://localhost:8080/auth/callback` for local Vite testing (the configured Vite dev server uses port 8080).
+- The SPA derives callback URLs from the current site origin; do not hard-code `localhost` into deployed OAuth requests.
 - Verify password recovery and email delivery with test accounts.
 
 ## Release gate
