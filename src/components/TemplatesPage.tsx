@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, ArrowRight, Check, Palette } from "lucide-react";
+import { ArrowLeft, Check, Palette } from "lucide-react";
 import { Link } from "react-router-dom";
 import { hiringTemplates, type HiringTemplateId } from "../lib/templates/catalog";
 
@@ -65,7 +65,7 @@ export function TemplatesPage() {
                   <h4 className="mt-3 font-display text-2xl">{selected.sampleRole}</h4>
                   <p className="mt-2 text-sm text-muted">{selected.sampleLocation}</p>
                   <div className="mt-5 flex flex-wrap gap-2">{["Clear responsibilities", "Supportive team", "Learning opportunities"].map((item) => <span key={item} className="rounded-full px-3 py-1.5 text-xs font-medium" style={{ backgroundColor: selected.surface, color: selected.accent }}>{item}</span>)}</div>
-                  <button type="button" disabled className="mt-6 inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-white opacity-90" style={{ backgroundColor: selected.accent }}>Application preview <ArrowRight className="size-4" /></button>
+                  <span aria-disabled="true" className="mt-6 inline-flex items-center rounded-full px-5 py-3 text-sm font-semibold text-white opacity-90" style={{ backgroundColor: selected.accent }}>Application preview · not active yet</span>
                 </article>
                 <div className="mt-6 border-t border-black/10 pt-4 text-xs leading-5 text-muted">Privacy & Operator Information · Sample page for design review. Final operator and privacy details must be supplied before publication.</div>
               </div>
