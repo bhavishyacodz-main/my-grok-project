@@ -8,7 +8,7 @@
 
 These checks do not verify authentication against a configured Supabase project, RLS, Storage, Edge Functions or complete user journeys.
 
-## Pending automated tests
+- Three Node-based hiring template catalogue tests added to the build test script; execution is pending the next preview build.\n\n## Pending automated tests
 
 - Vitest and React Testing Library component tests for auth state, forms and route guards.
 - Playwright browser tests for signup, email confirmation, Google OAuth callback, protected routes and sign-out.
