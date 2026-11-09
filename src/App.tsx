@@ -8,6 +8,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 import {
+  AlertCircle,
   ArrowRight,
   BriefcaseBusiness,
   Building2,
@@ -15,6 +16,7 @@ import {
   CircleHelp,
   FileText,
   LayoutDashboard,
+  LoaderCircle,
   LockKeyhole,
   LogOut,
   Mail,
@@ -285,7 +287,7 @@ function AuthCallbackPage() {
     else setMessage("We could not confirm your sign-in. Please return to the login page and try again.");
   }, [auth.loading, auth.user, auth.isConfigured, navigate, callbackError]);
 
-  return <AuthLayout><div className="text-center"><CheckCircle2 className="mx-auto size-10 text-pine" /><h1 className="mt-5 font-display text-2xl">{callbackError ? "Sign-in needs attention" : "Signing you in"}</h1><p role="status" className="mt-3 text-sm text-muted">{message}</p><Link to="/login" className="mt-6 inline-block font-semibold text-pine">Return to sign in</Link></div></AuthLayout>;
+  return <AuthLayout><div className="text-center">{callbackError ? <AlertCircle className="mx-auto size-10 text-danger" aria-hidden="true" /> : <LoaderCircle className="mx-auto size-10 animate-spin text-pine" aria-hidden="true" />}<h1 className="mt-5 font-display text-2xl">{callbackError ? "Sign-in needs attention" : "Signing you in"}</h1><p role="status" className="mt-3 text-sm text-muted">{message}</p><Link to="/login" className="mt-6 inline-block font-semibold text-pine">Return to sign in</Link></div></AuthLayout>;
 }
 
 function EmployerOnboardingPage() {
